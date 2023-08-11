@@ -2,6 +2,8 @@ from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.animation import Animation
+from kivy.graphics import Color, Rectangle
 from kivy.properties import (
     NumericProperty, ReferenceListProperty, ObjectProperty
 )
@@ -44,12 +46,28 @@ class HiddenObjectGame(Widget):
         self.scatter.size = self.image.size
         self.scatter.center = self.center
         self.hidden_objects = [
-            {"position": (100, 200), "size": (50, 50)},  # Example coordinates and size
-            {"position": (500, 600), "size": (40, 60)}
+            {"position": (2110, 630), "size": (190, 350)}  # Example coordinates and size
+
         ]
 
+    def flash_screen(self, color=(1, 0, 0, 1)):  # Default color is red
+        flash = Widget(size=Window.size, pos=(0, 0))
+        
+        with flash.canvas:
+            Color(*color)
+            self.flash_rect = Rectangle(size=flash.size, pos=flash.pos)
 
-    def on_touch_down(self, touch):
+        self.add_widget(flash)
+
+        anim = Animation(opacity=0, duration=0.3)  # Flash for 0.3 seconds
+
+        def remove_flash(*args):
+            self.remove_widget(flash)
+
+        anim.bind(on_complete=remove_flash)
+        anim.start(flash)
+
+    def on_touch_up(self, touch):
         # Convert touch location to Scatter's local coordinates
         local_touch = self.scatter.to_local(*touch.pos)
 
@@ -62,16 +80,18 @@ class HiddenObjectGame(Widget):
             w, h = obj["size"]
             
             if x < img_x < x + w and y < img_y < y + h:
-                print("Hidden object found!")
-                self.hidden_objects.remove(obj)
+                # print("Hidden object found!")
+                # self.hidden_objects.remove(obj)
+                self.flash_screen()
                 break
         
-        return super().on_touch_down(touch)
+        return super().on_touch_up(touch)
 
 class HiddenObjectApp(App):
     def build(self):
         return HiddenObjectGame()
     
+
     
 if __name__ == "__main__":
     HiddenObjectApp().run()
