@@ -68,24 +68,25 @@ class HiddenObjectGame(Widget):
         anim.start(flash)
 
     def on_touch_up(self, touch):
-        # Convert touch location to Scatter's local coordinates
-        local_touch = self.scatter.to_local(*touch.pos)
+        if self.scatter.collide_point(*touch.pos):
+            # Convert touch location to Scatter's local coordinates
+            local_touch = self.scatter.to_local(*touch.pos, relative=False)
 
-        # Convert local_touch from Scatter's coordinates to the image's current scale and position
-        img_x = (local_touch[0] - self.image.x) / self.scatter.scale
-        img_y = (local_touch[1] - self.image.y) / self.scatter.scale
-        
-        for obj in self.hidden_objects:
-            x, y = obj["position"]
-            w, h = obj["size"]
+            # Convert local_touch from Scatter's coordinates to the image's current scale and position
+            img_x = local_touch[0] - self.image.x
+            img_y = local_touch[1] - self.image.y
             
-            if x < img_x < x + w and y < img_y < y + h:
-                # print("Hidden object found!")
-                # self.hidden_objects.remove(obj)
-                self.flash_screen()
-                break
-        
-        return super().on_touch_up(touch)
+            for obj in self.hidden_objects:
+                x, y = obj["position"]
+                w, h = obj["size"]
+                
+                if x < img_x < x + w and y < img_y < y + h:
+                    # print("Hidden object found!")
+                    # self.hidden_objects.remove(obj)
+                    self.flash_screen()
+                    break
+            
+            return super().on_touch_up(touch)
 
 class HiddenObjectApp(App):
     def build(self):
