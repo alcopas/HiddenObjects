@@ -5,16 +5,44 @@ from kivy.uix.widget import Widget
 from kivy.properties import (
     NumericProperty, ReferenceListProperty, ObjectProperty
 )
+from kivy.uix.scatter import Scatter
+from kivy.core.window import Window
+
+class BoundedScatter(Scatter):
+    def on_transform(self, *args):
+        # Ensure the child (the image) is entirely inside the window.
+        # Get window size
+        w, h = Window.size
+
+        # Get the size of the image inside the Scatter after applying the scale
+        iw, ih = self.children[0].size
+        sw, sh = iw * self.scale, ih * self.scale  # Scaled width and height
+        
+        # Adjust x position
+        if self.x > 0:
+            self.x = 0
+        if self.right < w:
+            self.x = w - sw
+
+        # Adjust y position
+        if self.y > 0:
+            self.y = 0
+        if self.top < h:
+            self.y = h - sh
+
+        super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
-        self.scatter = Scatter(do_rotation=False, scale_min=1)
-        self.image = Image(source="path_to_large_image.jpg")
+        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
+        self.image = Image(source="image.jpg", size_hint=(None, None), size=(3840, 2160))
         
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
+        self.scatter.size = self.image.size
+        self.scatter.center = self.center
         self.hidden_objects = [
             {"position": (100, 200), "size": (50, 50)},  # Example coordinates and size
             {"position": (500, 600), "size": (40, 60)}
@@ -46,4 +74,4 @@ class HiddenObjectApp(App):
     
     
 if __name__ == "__main__":
-    HiddenObjectApp.run()
+    HiddenObjectApp().run()
