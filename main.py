@@ -92,7 +92,5 @@ class HiddenObjectApp(App):
     def build(self):
         return HiddenObjectGame()
     
-
-    
 if __name__ == "__main__":
     HiddenObjectApp().run()
