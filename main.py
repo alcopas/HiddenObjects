@@ -45,10 +45,19 @@ class HiddenObjectGame(Widget):
         self.add_widget(self.scatter)
         self.scatter.size = self.image.size
         self.scatter.center = self.center
+        self.game_level = 0
         self.hidden_objects = [
-            {"position": (2110, 630), "size": (190, 350)}  # Example coordinates and size
-
-        ]
+            [
+                {"position": (2110, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
+                {"position": (2310, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
+                {"position": (210, 60), "size": (190, 350), "name":"Shoe", "id":1, "found":False}  # Example coordinates and size
+            ],
+            [
+               {"position": (2110, 630), "size": (190, 350), "name":"Mouse"},
+               {"position": (210, 60), "size": (190, 350), "name":"Ball"}   # Example coordinates and size
+            ]
+            
+            ]
 
     def flash_screen(self, color=(1, 0, 0, 1)):  # Default color is red
         flash = Widget(size=Window.size, pos=(0, 0))
@@ -76,9 +85,11 @@ class HiddenObjectGame(Widget):
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects:
+            for obj in self.hidden_objects[self.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
+                item_name = obj["name"]
+                
                 
                 if x < img_x < x + w and y < img_y < y + h:
                     # print("Hidden object found!")
