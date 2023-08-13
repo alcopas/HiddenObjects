@@ -15,10 +15,14 @@ from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.cache import Cache
+from kivy.core.audio import SoundLoader
 DEBUG = False
 
 class MainMenuScreen(Screen):
-    pass
+    music = SoundLoader.load('intro_music.mid')
+
+    def on_leave(self):
+        self.music.stop()
 
 class GameScreen(Screen):
     pass
@@ -34,13 +38,13 @@ class IntroSlideshow(BoxLayout):
         print("Creating IntroSlideshow") if DEBUG else None
         self.register_event_type('on_slide_end')
         self.bind(current_slide=self.check_slide_end)
-        Clock.schedule_once(self.next_slide, 3)
+        Clock.schedule_once(self.next_slide, 6)
 
     def check_slide_end(self, instance, value):
         print(f"check_slide_end called with value: {value}") if DEBUG else None
         if value == len(self.slides) - 1:
             print("Scheduling on_slide_end dispatch.") if DEBUG else None
-            Clock.schedule_once(lambda dt: self.dispatch('on_slide_end'), 2)
+            Clock.schedule_once(lambda dt: self.dispatch('on_slide_end'), 6)
         elif value > len(self.slides) - 1:
             print("Adjusting current_slide to last slide.") if DEBUG else None
             self.current_slide = len(self.slides) - 1
@@ -60,12 +64,16 @@ class IntroScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         print("IntroScreen initialized") if DEBUG else None
-    
+
+    music = SoundLoader.load('intro_music.mid')
+
     def on_enter(self):
+        self.music.play()
         print ("PRINTING IDS") if DEBUG else None
         print(self.ids) if DEBUG else None
         self.ids.intro_slideshow.current_slide = 0  # reset slide
         
+
     def show_menu(self):
         self.manager.current = 'menu'
 
