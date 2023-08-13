@@ -10,7 +10,11 @@
     Image:
         id: slide_image
         allow_stretch: True
+        keep_ratio: True
         source: root.slides[root.current_slide]
+        center_x: self.parent.center_x
+        center_y: self.parent.center_y
+
     Button:
         text: "Skip"
         size_hint: (None, None)
