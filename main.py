@@ -161,6 +161,7 @@ class HiddenObjectGame(Widget):
 class HiddenObjectApp(App):
     
     def build(self):
+        Builder.load_file('layout.kv')
         sm = ScreenManager()
         
         sm.add_widget(IntroScreen(name='intro'))
