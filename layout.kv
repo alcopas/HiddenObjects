@@ -46,7 +46,7 @@
 
         # Game area (80% of width)
         HiddenObjectGame:
-            size_hint_x: 0.8
+            size_hint_x: 0.9
             id: game_area
 
             canvas.before:
@@ -66,7 +66,7 @@
         # Status area (20% of width)
         BoxLayout:
             orientation: 'vertical'
-            size_hint_x: 0.2
+            size_hint_x: 0.1
             padding: 10  # Add some padding around the status items
             spacing: 10  # Add some space between status items
 
@@ -87,6 +87,50 @@
 
             BoxLayout:
                 id: item2
+                Image:
+                    source: "shoe.png"
+                    size_hint: (None, None)
+                    size: (100, 100)  # or any other size you want for the icons
+                    keep_ratio: True
+                CheckBox:
+                    active: root.ids.game_area.is_item_found('Shoe')
+                    readonly: True
+
+            BoxLayout:
+                id: item3
+                Image:
+                    source: "umbrella.png"
+                    size_hint: (None, None)
+                    size: (100, 100)  # or any other size you want for the icons
+                    keep_ratio: True
+                CheckBox:
+                    active: root.ids.game_area.is_item_found('Umbrella')
+                    readonly: True
+
+            BoxLayout:
+                id: item4
+                Image:
+                    source: "shoe.png"
+                    size_hint: (None, None)
+                    size: (100, 100)  # or any other size you want for the icons
+                    keep_ratio: True
+                CheckBox:
+                    active: root.ids.game_area.is_item_found('Shoe')
+                    readonly: True
+
+            BoxLayout:
+                id: item5
+                Image:
+                    source: "umbrella.png"
+                    size_hint: (None, None)
+                    size: (100, 100)  # or any other size you want for the icons
+                    keep_ratio: True
+                CheckBox:
+                    active: root.ids.game_area.is_item_found('Umbrella')
+                    readonly: True
+
+            BoxLayout:
+                id: item6
                 Image:
                     source: "shoe.png"
                     size_hint: (None, None)
