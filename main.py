@@ -5,10 +5,67 @@ from kivy.uix.widget import Widget
 from kivy.animation import Animation
 from kivy.graphics import Color, Rectangle
 from kivy.properties import (
-    NumericProperty, ReferenceListProperty, ObjectProperty
+    NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty
 )
 from kivy.uix.scatter import Scatter
 from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+from kivy.clock import Clock
+from kivy.uix.button import Button
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.lang import Builder
+
+DEBUG = False
+
+class MainMenuScreen(Screen):
+    pass
+
+class GameScreen(Screen):
+    pass
+
+
+class IntroSlideshow(BoxLayout):
+    orientation = 'vertical'
+    slides = ListProperty(["slide1.jpg", "slide2.jpg", "slide3.jpg"])
+    current_slide = NumericProperty(0)
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print("Creating IntroSlideshow") if DEBUG else None
+        self.register_event_type('on_slide_end')
+        self.bind(current_slide=self.check_slide_end)
+        Clock.schedule_once(self.next_slide, 3)
+
+    def check_slide_end(self, instance, value):
+        print(f"check_slide_end called with value: {value}") if DEBUG else None
+        if value == len(self.slides) - 1:
+            print("Scheduling on_slide_end dispatch.") if DEBUG else None
+            Clock.schedule_once(lambda dt: self.dispatch('on_slide_end'), 2)
+        elif value > len(self.slides) - 1:
+            print("Adjusting current_slide to last slide.") if DEBUG else None
+            self.current_slide = len(self.slides) - 1
+
+    def on_slide_end(self):
+        self.parent.show_menu()
+
+    def skip(self):
+        self.current_slide = len(self.slides) - 1
+
+    def next_slide(self, dt):
+        if self.current_slide < len(self.slides) - 1:
+            self.current_slide += 1
+            Clock.schedule_once(self.next_slide, 2)
+
+class IntroScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print("IntroScreen initialized") if DEBUG else None
+    
+    def on_enter(self):
+        self.ids.intro_slideshow.current_slide = 0  # reset slide
+        
+    def show_menu(self):
+        self.manager.current = 'menu'
 
 class BoundedScatter(Scatter):
     def on_transform(self, *args):
@@ -100,8 +157,17 @@ class HiddenObjectGame(Widget):
             return super().on_touch_up(touch)
 
 class HiddenObjectApp(App):
+    
     def build(self):
-        return HiddenObjectGame()
+        sm = ScreenManager()
+        
+        sm.add_widget(IntroScreen(name='intro'))
+        sm.add_widget(MainMenuScreen(name='menu'))
+        sm.add_widget(GameScreen(name='game'))
+
+        #sm.current = 'intro'
+
+        return sm
     
 if __name__ == "__main__":
     HiddenObjectApp().run()
