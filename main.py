@@ -29,8 +29,8 @@ class GameScreen(Screen):
 
 
 class IntroSlideshow(BoxLayout):
-    orientation = 'vertical'
-    slides = ListProperty(["slide1.jpg", "slide2.jpg", "slide3.jpg"])
+    #orientation = 'vertical'
+    slides = ListProperty(["Slide1.jpg", "Slide2.jpg", "Slide3.jpg"])
     current_slide = NumericProperty(0)
     
     def __init__(self, **kwargs):
