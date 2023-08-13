@@ -22,7 +22,9 @@ class MainMenuScreen(Screen):
     music = SoundLoader.load('intro_music.mid')
 
     def on_leave(self):
-        self.music.stop()
+        app = App.get_running_app()
+        if app.music:
+            app.music.stop()
 
 class GameScreen(Screen):
     pass
@@ -65,10 +67,11 @@ class IntroScreen(Screen):
         super().__init__(**kwargs)
         print("IntroScreen initialized") if DEBUG else None
 
-    music = SoundLoader.load('intro_music.mp3')
 
     def on_enter(self):
-        self.music.play()
+        app = App.get_running_app()
+        if app.music:
+            app.music.play()
         print ("PRINTING IDS") if DEBUG else None
         print(self.ids) if DEBUG else None
         self.ids.intro_slideshow.current_slide = 0  # reset slide
@@ -174,7 +177,9 @@ class HiddenObjectGame(Widget):
 
 class HiddenObjectApp(App):
     
+    music = None
     def build(self):
+        self.music = SoundLoader.load('intro_music.mp3')
         Builder.load_file('layout.kv')
         sm = ScreenManager()
         
