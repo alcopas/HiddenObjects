@@ -7,6 +7,12 @@
         pos: root.pos
 
 <IntroSlideshow>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # or any other desired color
+        Rectangle:
+            size: self.size
+            pos: self.pos
     Image:
         id: slide_image
         allow_stretch: True
