@@ -113,7 +113,7 @@ class HiddenObjectGame(Widget):
             [
                 {"position": (2110, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
                 {"position": (2310, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
-                {"position": (210, 60), "size": (190, 350), "name":"Shoe", "id":1, "found":False}  # Example coordinates and size
+                {"position": (210, 60), "size": (190, 350), "name":"Shoe", "id":1, "found":True}  # Example coordinates and size
             ],
             [
                {"position": (2110, 630), "size": (190, 350), "name":"Mouse"},
@@ -138,7 +138,13 @@ class HiddenObjectGame(Widget):
 
         anim.bind(on_complete=remove_flash)
         anim.start(flash)
-
+    
+    def is_item_found(self, item_name):
+        for obj in self.hidden_objects[self.game_level]:
+            if obj["name"] == item_name and obj["found"]:
+                return True
+        return False
+    
     def on_touch_up(self, touch):
         if self.scatter.collide_point(*touch.pos):
             # Convert touch location to Scatter's local coordinates

@@ -41,4 +41,59 @@
             on_press: app.stop()
 
 <GameScreen>:
-    HiddenObjectGame:
+    BoxLayout:
+        orientation: 'horizontal'
+
+        # Game area (80% of width)
+        HiddenObjectGame:
+            size_hint_x: 0.8
+            id: game_area
+
+            canvas.before:
+                StencilPush
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                StencilUse
+
+            canvas.after:
+                StencilUnUse
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                StencilPop
+
+        # Status area (20% of width)
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 0.2
+            padding: 10  # Add some padding around the status items
+            spacing: 10  # Add some space between status items
+
+            Label:
+                text: "Items to find:"
+                font_size: '20sp'
+
+            BoxLayout:
+                id: item1
+                Image:
+                    source: "umbrella.png"
+                    size_hint: (None, None)
+                    size: (100, 100)  # or any other size you want for the icons
+                    keep_ratio: True
+                CheckBox:
+                    active: root.ids.game_area.is_item_found('Umbrella')
+                    readonly: True
+
+            BoxLayout:
+                id: item2
+                Image:
+                    source: "shoe.png"
+                    size_hint: (None, None)
+                    size: (100, 100)  # or any other size you want for the icons
+                    keep_ratio: True
+                CheckBox:
+                    active: root.ids.game_area.is_item_found('Shoe')
+                    readonly: True
+
+            # ... add more items as needed
