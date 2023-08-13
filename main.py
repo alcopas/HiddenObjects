@@ -62,6 +62,8 @@ class IntroScreen(Screen):
         print("IntroScreen initialized") if DEBUG else None
     
     def on_enter(self):
+        print ("PRINTING IDS")
+        print(self.ids)
         self.ids.intro_slideshow.current_slide = 0  # reset slide
         
     def show_menu(self):
