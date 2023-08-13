@@ -15,10 +15,6 @@ from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.cache import Cache
-Cache.remove('slide1.jpg')
-Cache.remove('slide2.jpg')
-Cache.remove('slide3.jpg')
-
 DEBUG = False
 
 class MainMenuScreen(Screen):
@@ -66,8 +62,8 @@ class IntroScreen(Screen):
         print("IntroScreen initialized") if DEBUG else None
     
     def on_enter(self):
-        print ("PRINTING IDS")
-        print(self.ids)
+        print ("PRINTING IDS") if DEBUG else None
+        print(self.ids) if DEBUG else None
         self.ids.intro_slideshow.current_slide = 0  # reset slide
         
     def show_menu(self):
