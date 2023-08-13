@@ -65,7 +65,7 @@ class IntroScreen(Screen):
         super().__init__(**kwargs)
         print("IntroScreen initialized") if DEBUG else None
 
-    music = SoundLoader.load('intro_music.mp3')
+    music = SoundLoader.load('intro_music.ogg')
 
     def on_enter(self):
         self.music.play()
