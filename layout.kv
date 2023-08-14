@@ -28,6 +28,9 @@
         pos_hint: {"right": 1, "top": 1}
         on_release: root.skip()
 
+<OptionsScreen>:
+
+
 <MainMenuScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -39,6 +42,9 @@
         Button:
             text: 'Exit'
             on_press: app.stop()
+        Button:
+            text: 'Options'
+            on_press: app.root.current = 'options'
 
 <GameScreen>:
     BoxLayout:
