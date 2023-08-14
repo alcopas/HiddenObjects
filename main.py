@@ -5,10 +5,80 @@ from kivy.uix.widget import Widget
 from kivy.animation import Animation
 from kivy.graphics import Color, Rectangle
 from kivy.properties import (
-    NumericProperty, ReferenceListProperty, ObjectProperty
+    NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty
 )
 from kivy.uix.scatter import Scatter
 from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+from kivy.clock import Clock
+from kivy.uix.button import Button
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.lang import Builder
+from kivy.cache import Cache
+from kivy.core.audio import SoundLoader
+DEBUG = False
+
+class MainMenuScreen(Screen):
+    music = SoundLoader.load('intro_music.mid')
+
+    def on_leave(self):
+        app = App.get_running_app()
+        if app.music:
+            app.music.stop()
+
+class GameScreen(Screen):
+    pass
+
+
+class IntroSlideshow(BoxLayout):
+    #orientation = 'vertical'
+    slides = ListProperty(["Slide1.jpg", "Slide2.jpg", "Slide3.jpg"])
+    current_slide = NumericProperty(0)
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print("Creating IntroSlideshow") if DEBUG else None
+        self.register_event_type('on_slide_end')
+        self.bind(current_slide=self.check_slide_end)
+        Clock.schedule_once(self.next_slide, 6)
+
+    def check_slide_end(self, instance, value):
+        print(f"check_slide_end called with value: {value}") if DEBUG else None
+        if value == len(self.slides) - 1:
+            print("Scheduling on_slide_end dispatch.") if DEBUG else None
+            Clock.schedule_once(lambda dt: self.dispatch('on_slide_end'), 6)
+        elif value > len(self.slides) - 1:
+            print("Adjusting current_slide to last slide.") if DEBUG else None
+            self.current_slide = len(self.slides) - 1
+
+    def on_slide_end(self):
+        self.parent.show_menu()
+
+    def skip(self):
+        self.current_slide = len(self.slides) - 1
+
+    def next_slide(self, dt):
+        if self.current_slide < len(self.slides) - 1:
+            self.current_slide += 1
+            Clock.schedule_once(self.next_slide, 2)
+
+class IntroScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        print("IntroScreen initialized") if DEBUG else None
+
+
+    def on_enter(self):
+        app = App.get_running_app()
+        if app.music:
+            app.music.play()
+        print ("PRINTING IDS") if DEBUG else None
+        print(self.ids) if DEBUG else None
+        self.ids.intro_slideshow.current_slide = 0  # reset slide
+        
+
+    def show_menu(self):
+        self.manager.current = 'menu'
 
 class BoundedScatter(Scatter):
     def on_transform(self, *args):
@@ -50,7 +120,7 @@ class HiddenObjectGame(Widget):
             [
                 {"position": (2110, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
                 {"position": (2310, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
-                {"position": (210, 60), "size": (190, 350), "name":"Shoe", "id":1, "found":False}  # Example coordinates and size
+                {"position": (210, 60), "size": (190, 350), "name":"Shoe", "id":1, "found":True}  # Example coordinates and size
             ],
             [
                {"position": (2110, 630), "size": (190, 350), "name":"Mouse"},
@@ -75,7 +145,13 @@ class HiddenObjectGame(Widget):
 
         anim.bind(on_complete=remove_flash)
         anim.start(flash)
-
+    
+    def is_item_found(self, item_name):
+        for obj in self.hidden_objects[self.game_level]:
+            if obj["name"] == item_name and obj["found"]:
+                return True
+        return False
+    
     def on_touch_up(self, touch):
         if self.scatter.collide_point(*touch.pos):
             # Convert touch location to Scatter's local coordinates
@@ -100,8 +176,20 @@ class HiddenObjectGame(Widget):
             return super().on_touch_up(touch)
 
 class HiddenObjectApp(App):
+    
+    music = None
     def build(self):
-        return HiddenObjectGame()
+        self.music = SoundLoader.load('intro_music.mp3')
+        Builder.load_file('layout.kv')
+        sm = ScreenManager()
+        
+        sm.add_widget(IntroScreen(name='intro'))
+        sm.add_widget(MainMenuScreen(name='menu'))
+        sm.add_widget(GameScreen(name='game'))
+
+        #sm.current = 'intro'
+
+        return sm
     
 if __name__ == "__main__":
     HiddenObjectApp().run()
