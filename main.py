@@ -28,8 +28,8 @@ class MainMenuScreen(Screen):
 
 class GameScreen(Screen):
     pass
-
-
+class OptionsScreen(Screen):
+    pass
 class IntroSlideshow(BoxLayout):
     #orientation = 'vertical'
     slides = ListProperty(["Slide1.jpg", "Slide2.jpg", "Slide3.jpg"])
@@ -186,6 +186,7 @@ class HiddenObjectApp(App):
         sm.add_widget(IntroScreen(name='intro'))
         sm.add_widget(MainMenuScreen(name='menu'))
         sm.add_widget(GameScreen(name='game'))
+        sm.add_widget(OptionsScreen(name='options'))
 
         #sm.current = 'intro'
 
