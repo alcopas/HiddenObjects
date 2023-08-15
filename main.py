@@ -22,7 +22,6 @@ from kivy.uix.image import AsyncImage
 DEBUG = False
 
 class MainMenuScreen(Screen):
-    music = SoundLoader.load('intro_music.mid')
 
     def on_leave(self):
         app = App.get_running_app()
@@ -46,7 +45,7 @@ class IntroScreen(Screen):
 class CustomCarousel(Carousel):
 
     def on_touch_move(self, touch):
-        # Check if the current index is the last slide and if the touch is moving to the right
+        # Check if the current index is the last slide and if the touch is moving to the left
         if self.index == len(self.slides) - 1 and touch.dx < 0:
             self.parent.manager.current = 'menu'
             return True
