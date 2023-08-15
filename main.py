@@ -42,6 +42,19 @@ class IntroScreen(Screen):
         if app.music:
             app.music.play()
 
+class LevelSelecterScreen(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+        for i in range(1, 4):  # Denpends on how many levels there are
+            button = Button(text= 'Level {i}', size_hint=(None, None), size=(100, 50))
+            button.bind(on_press=self.on_level_selected)
+            self.add_widget(button)
+            
+    def on_level_selected(self, instance):
+        app = App.get_running_app()
+        app.root.current = 'game'
+
 class CustomCarousel(Carousel):
 
     def on_touch_move(self, touch):
@@ -156,6 +169,7 @@ class HiddenObjectApp(App):
         
         sm.add_widget(IntroScreen(name='intro'))
         sm.add_widget(MainMenuScreen(name='menu'))
+        sm.add_widget(LevelSelecterScreen(name='levels'))
         sm.add_widget(GameScreen(name='game'))
         sm.add_widget(OptionsScreen(name='options'))
 
