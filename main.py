@@ -16,6 +16,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.cache import Cache
 from kivy.core.audio import SoundLoader
+from kivy.uix.carousel import Carousel
+from kivy.uix.image import AsyncImage
+
 DEBUG = False
 
 class MainMenuScreen(Screen):
@@ -28,57 +31,26 @@ class MainMenuScreen(Screen):
 
 class GameScreen(Screen):
     pass
+
 class OptionsScreen(Screen):
-    pass
-class IntroSlideshow(BoxLayout):
-    #orientation = 'vertical'
-    slides = ListProperty(["Slide1.jpg", "Slide2.jpg", "Slide3.jpg"])
-    current_slide = NumericProperty(0)
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        print("Creating IntroSlideshow") if DEBUG else None
-        self.register_event_type('on_slide_end')
-        self.bind(current_slide=self.check_slide_end)
-        Clock.schedule_once(self.next_slide, 6)
-
-    def check_slide_end(self, instance, value):
-        print(f"check_slide_end called with value: {value}") if DEBUG else None
-        if value == len(self.slides) - 1:
-            print("Scheduling on_slide_end dispatch.") if DEBUG else None
-            Clock.schedule_once(lambda dt: self.dispatch('on_slide_end'), 6)
-        elif value > len(self.slides) - 1:
-            print("Adjusting current_slide to last slide.") if DEBUG else None
-            self.current_slide = len(self.slides) - 1
-
-    def on_slide_end(self):
-        self.parent.show_menu()
-
-    def skip(self):
-        self.current_slide = len(self.slides) - 1
-
-    def next_slide(self, dt):
-        if self.current_slide < len(self.slides) - 1:
-            self.current_slide += 1
-            Clock.schedule_once(self.next_slide, 2)
+    pass    
 
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        print("IntroScreen initialized") if DEBUG else None
-
-
     def on_enter(self):
         app = App.get_running_app()
         if app.music:
             app.music.play()
-        print ("PRINTING IDS") if DEBUG else None
-        print(self.ids) if DEBUG else None
-        self.ids.intro_slideshow.current_slide = 0  # reset slide
-        
 
-    def show_menu(self):
-        self.manager.current = 'menu'
+class CustomCarousel(Carousel):
+
+    def on_touch_move(self, touch):
+        # Check if the current index is the last slide and if the touch is moving to the right
+        if self.index == len(self.slides) - 1 and touch.dx < 0:
+            self.parent.manager.current = 'menu'
+            return True
+        return super(CustomCarousel, self).on_touch_move(touch)
 
 class BoundedScatter(Scatter):
     def on_transform(self, *args):
@@ -188,7 +160,7 @@ class HiddenObjectApp(App):
         sm.add_widget(GameScreen(name='game'))
         sm.add_widget(OptionsScreen(name='options'))
 
-        #sm.current = 'intro'
+        sm.current = 'intro'
 
         return sm
     

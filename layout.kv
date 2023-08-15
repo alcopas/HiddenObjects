@@ -1,32 +1,17 @@
-#:kivy 1.0.9
+#:kivy 2.2.1
 
 <IntroScreen>:
-    IntroSlideshow:
-        id: intro_slideshow
-        size: root.size
-        pos: root.pos
+    CustomCarousel:
+        id: intro_carousel
+        direction: 'right'
+        Image:
+            source: 'Slide1.jpg'
+        Image:
+            source: 'Slide2.jpg'
+        Image:
+            source: 'Slide3.jpg'
 
-<IntroSlideshow>:
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1  # or any other desired color
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    Image:
-        id: slide_image
-        allow_stretch: True
-        keep_ratio: True
-        source: root.slides[root.current_slide]
-        center_x: self.parent.center_x
-        center_y: self.parent.center_y
 
-    Button:
-        text: "Skip"
-        size_hint: (None, None)
-        size: (100, 50)
-        pos_hint: {"right": 1, "top": 1}
-        on_release: root.skip()
 
 <OptionsScreen>:
 
@@ -50,7 +35,7 @@
     BoxLayout:
         orientation: 'horizontal'
 
-        # Game area (80% of width)
+        # Game area (90% of width)
         HiddenObjectGame:
             size_hint_x: 0.9
             id: game_area
@@ -69,7 +54,7 @@
                     size: self.size
                 StencilPop
 
-        # Status area (20% of width)
+        # Status area (10% of width)
         BoxLayout:
             orientation: 'vertical'
             size_hint_x: 0.1
