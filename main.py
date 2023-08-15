@@ -18,6 +18,7 @@ from kivy.cache import Cache
 from kivy.core.audio import SoundLoader
 from kivy.uix.carousel import Carousel
 from kivy.uix.image import AsyncImage
+from kivy.uix.checkbox import CheckBox
 
 DEBUG = False
 
@@ -29,7 +30,23 @@ class MainMenuScreen(Screen):
             app.music.stop()
 
 class GameScreen(Screen):
-    pass
+    game_level = NumericProperty(0)
+    def on_enter(self):
+        hog = self.ids['game_area']
+        last_added = -1
+        for item in hog.hidden_objects[self.game_level]:
+            if item["id"] > last_added:
+                bl = BoxLayout()
+                last_added = item["id"]
+                bl.id = last_added
+                img = Image(source=f'{item["name"]}.png', size=(100,100), size_hint=(None,None), keep_ratio=True)
+                bl.add_widget(img)
+                cb = CheckBox()
+                cb.active = hog.is_item_found(item["name"])
+                cb.readonly = True
+                bl.add_widget(cb)
+                status_area = self.ids['status_area']
+                status_area.add_widget(bl)    
 
 class OptionsScreen(Screen):
     pass    
@@ -46,10 +63,9 @@ class LevelSelecterScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
-    def select_level_press(self, selected_level):
-        
-        app = App.get_running_app()
-        app.game_level = int(selected_level)
+    def select_level_press(self, selected_level):        
+        app = App.get_running_app()        
+        GameScreen.game_level = int(selected_level)
         app.root.current = 'game'
 
 class CustomCarousel(Carousel):
@@ -86,7 +102,6 @@ class BoundedScatter(Scatter):
         super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    hoapp = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
@@ -100,16 +115,17 @@ class HiddenObjectGame(Widget):
         self.scatter.center = self.center
         self.hidden_objects = [
             [
-                {"position": (2110, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
+                {"position": (2110, 630), "size": (190, 350), "name":"umbrella", "id":0, "found":False},
                 {"position": (2310, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
-                {"position": (210, 60), "size": (190, 350), "name":"Shoe", "id":1, "found":True}  # Example coordinates and size
+                {"position": (210, 60), "size": (190, 350), "name":"shoe", "id":1, "found":True}  # Example coordinates and size
             ],
             [
-               {"position": (2110, 630), "size": (190, 350), "name":"Mouse"},
-               {"position": (210, 60), "size": (190, 350), "name":"Ball"}   # Example coordinates and size
+               {"position": (2110, 630), "size": (190, 350), "name":"mouse", "id":0, "found":False},
+               {"position": (210, 60), "size": (190, 350), "name":"ball", "id":1, "found":False}   # Example coordinates and size
             ]
             
-            ]
+            ]        
+        
 
     def flash_screen(self, color=(1, 0, 0, 1)):  # Default color is red
         flash = Widget(size=Window.size, pos=(0, 0))
@@ -129,7 +145,7 @@ class HiddenObjectGame(Widget):
         anim.start(flash)
     
     def is_item_found(self, item_name):
-        for obj in self.hidden_objects[self.app.game_level]:
+        for obj in self.hidden_objects[GameScreen.game_level]:
             if obj["name"] == item_name and obj["found"]:
                 return True
         return False
@@ -144,7 +160,7 @@ class HiddenObjectGame(Widget):
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects[self.app.game_level]:
+            for obj in self.hidden_objects[self.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
                 item_name = obj["name"]
@@ -161,7 +177,6 @@ class HiddenObjectGame(Widget):
 class HiddenObjectApp(App):
     
     music = None
-    game_level = 0
     def build(self):
         self.music = SoundLoader.load('intro_music.mp3')
         Builder.load_file('layout.kv')

@@ -60,6 +60,7 @@
         
 
 <GameScreen>:
+    id: game_screen
     BoxLayout:
         orientation: 'horizontal'
 
@@ -85,6 +86,7 @@
         # Status area (10% of width)
         BoxLayout:
             orientation: 'vertical'
+            id: status_area
             size_hint_x: 0.1
             padding: 10  # Add some padding around the status items
             spacing: 10  # Add some space between status items
@@ -93,70 +95,4 @@
                 text: "Items to find:"
                 font_size: '20sp'
 
-            BoxLayout:
-                id: item1
-                Image:
-                    source: "umbrella.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Umbrella')
-                    readonly: True
-
-            BoxLayout:
-                id: item2
-                Image:
-                    source: "shoe.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Shoe')
-                    readonly: True
-
-            BoxLayout:
-                id: item3
-                Image:
-                    source: "umbrella.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Umbrella')
-                    readonly: True
-
-            BoxLayout:
-                id: item4
-                Image:
-                    source: "shoe.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Shoe')
-                    readonly: True
-
-            BoxLayout:
-                id: item5
-                Image:
-                    source: "umbrella.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Umbrella')
-                    readonly: True
-
-            BoxLayout:
-                id: item6
-                Image:
-                    source: "shoe.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Shoe')
-                    readonly: True
-
-            # ... add more items as needed
+            
