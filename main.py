@@ -160,7 +160,7 @@ class HiddenObjectGame(Widget):
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects[self.game_level]:
+            for obj in self.hidden_objects[GameScreen.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
                 item_name = obj["name"]
