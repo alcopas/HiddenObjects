@@ -42,17 +42,14 @@ class IntroScreen(Screen):
         if app.music:
             app.music.play()
 
-class LevelSelecterScreen(BoxLayout):
+class LevelSelecterScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
-        for i in range(1, 4):  # Denpends on how many levels there are
-            button = Button(text= 'Level {i}', size_hint=(None, None), size=(100, 50))
-            button.bind(on_press=self.on_level_selected)
-            self.add_widget(button)
-            
-    def on_level_selected(self, instance):
+    def select_level_press(self, selected_level):
+        
         app = App.get_running_app()
+        app.game_level = int(selected_level)
         app.root.current = 'game'
 
 class CustomCarousel(Carousel):
@@ -89,8 +86,10 @@ class BoundedScatter(Scatter):
         super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
+    hoapp = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.app = App.get_running_app()
         
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source="image.jpg", size_hint=(None, None), size=(3840, 2160))
@@ -99,7 +98,6 @@ class HiddenObjectGame(Widget):
         self.add_widget(self.scatter)
         self.scatter.size = self.image.size
         self.scatter.center = self.center
-        self.game_level = 0
         self.hidden_objects = [
             [
                 {"position": (2110, 630), "size": (190, 350), "name":"Umbrella", "id":0, "found":False},
@@ -131,7 +129,7 @@ class HiddenObjectGame(Widget):
         anim.start(flash)
     
     def is_item_found(self, item_name):
-        for obj in self.hidden_objects[self.game_level]:
+        for obj in self.hidden_objects[self.app.game_level]:
             if obj["name"] == item_name and obj["found"]:
                 return True
         return False
@@ -141,11 +139,12 @@ class HiddenObjectGame(Widget):
             # Convert touch location to Scatter's local coordinates
             local_touch = self.scatter.to_local(*touch.pos, relative=False)
 
+            app = App.get_running_app()
             # Convert local_touch from Scatter's coordinates to the image's current scale and position
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects[self.game_level]:
+            for obj in self.hidden_objects[self.app.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
                 item_name = obj["name"]
@@ -162,6 +161,7 @@ class HiddenObjectGame(Widget):
 class HiddenObjectApp(App):
     
     music = None
+    game_level = 0
     def build(self):
         self.music = SoundLoader.load('intro_music.mp3')
         Builder.load_file('layout.kv')

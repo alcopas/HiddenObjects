@@ -46,13 +46,18 @@
 
     BoxLayout:
         orientation: 'vertical'
+        id: level_selector_boxlayout
         Label:
             text: 'Select a Level'
-        LevelSelector:
-            size_hint_y: None
-            height: self.minimum_height
+        Slider:
+            id: level_selector
+            min: 0
+            max: 4
+            value: 0
+        Button:
+            text: 'Select level'
+            on_press: root.select_level_press(level_selector.value)
         
-
 
 <GameScreen>:
     BoxLayout:
