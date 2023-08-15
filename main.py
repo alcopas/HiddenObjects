@@ -22,7 +22,6 @@ from kivy.uix.image import AsyncImage
 DEBUG = False
 
 class MainMenuScreen(Screen):
-    music = SoundLoader.load('intro_music.mid')
 
     def on_leave(self):
         app = App.get_running_app()
