@@ -93,7 +93,7 @@ class BoundedScatter(Scatter):
     def on_transform(self, *args):
         # Ensure the child (the image) is entirely inside the window.
         # Get window size
-        w, h = Window.size
+        w, h = self.parent.size if self.parent else Window.size
 
         # Get the size of the image inside the Scatter after applying the scale
         iw, ih = self.children[0].size
