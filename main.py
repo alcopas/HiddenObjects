@@ -5,7 +5,7 @@ from kivy.uix.widget import Widget
 from kivy.animation import Animation
 from kivy.graphics import Color, Rectangle
 from kivy.properties import (
-    NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty
+    NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty, StringProperty
 )
 from kivy.uix.scatter import Scatter
 from kivy.core.window import Window
@@ -33,6 +33,13 @@ class GameScreen(Screen):
     game_level = NumericProperty(0)
     def on_enter(self):
         hog = self.ids['game_area']
+        if self.game_level == 0:
+            hog.source_image = "Teich.png"
+        elif self.game_level == 1:
+            hog.source_image = "Zimmer.png"
+        elif self.game_level == 2:
+            hog.source_image = "Garten.png"
+
         last_added = -1
         for item in hog.hidden_objects[self.game_level]:
             if item["id"] > last_added:
@@ -102,17 +109,16 @@ class BoundedScatter(Scatter):
         super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
+    scatter = ObjectProperty(None)
+    image = ObjectProperty(None)
+    source_image = StringProperty('image.jpg')
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
+
         
-        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
-        self.image = Image(source="image.jpg", size_hint=(None, None), size=(3840, 2160))
         
-        self.scatter.add_widget(self.image)
-        self.add_widget(self.scatter)
-        self.scatter.size = self.image.size
-        self.scatter.center = self.center
         self.hidden_objects = [
             [
                 {"position": (2110, 630), "size": (190, 350), "name":"umbrella", "id":0, "found":False},
