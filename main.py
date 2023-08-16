@@ -46,7 +46,8 @@ class GameScreen(Screen):
         elif self.game_level == 2:
             hog.source_image = "garten.png"
         last_added = -1
-        our_size = (100, 100) if len(hog.hidden_objects) < 6 else (75,75)
+        our_size = (100, 100) if len(hog.hidden_objects[self.game_level]) < 6 else (50,50)
+        # TODO: make this math better
         for item in hog.hidden_objects[self.game_level]:
             if item["id"] > last_added:
                 bl = BoxLayout()
