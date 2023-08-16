@@ -1,21 +1,5 @@
 #:kivy 2.2.0
 
-<HiddenObjectGame>:
-    scatter: _scatter
-    image: _image
-    BoundedScatter:
-        id: _scatter
-        do_rotation: False
-        do_translation: True
-        size_hint: None, None
-        scale_min: 1
-        Image:
-            id: _image
-            source: root.source_image
-            size_hint: None, None
-            size: 3840, 2160
-            
-
 <IntroScreen>:
     CustomCarousel:
         id: intro_carousel
@@ -37,14 +21,14 @@
 
 
 <OptionsScreen>:
+
+
 <MainMenuScreen>:
 
     BoxLayout:
         orientation: 'vertical'
-        background_color: 1, 1, 1, 1
         Label:
             text: 'Welcome to Hidden Object Game'
-            background_color: 1, 1, 1, 1 #white, doesn't work yet
         Button:
             text: 'New Game'
             on_press: app.root.current = 'levels' #it should go to level selevtor not sure if it works
@@ -76,9 +60,9 @@
 
 <GameScreen>:
     id: game_screen
+    
     BoxLayout:
         orientation: 'horizontal'
-
         # Game area (90% of width)
         HiddenObjectGame:
             size_hint_x: 0.9

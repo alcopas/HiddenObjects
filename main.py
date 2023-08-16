@@ -36,15 +36,14 @@ class GameScreen(Screen):
         hog.game_screen = self 
         prefix = ''
         if self.game_level == 0:
-            pass
-            #hog.source_image = "./images/teich/teich.png"
-            #prefix = './images/teich/'
+            #pass
+            hog.source_image = "./images/teich/teich.png"
+            prefix = './images/teich/'
         elif self.game_level == 1:
             hog.source_image = "./images/zimmer/zimmer.png"
             prefix = './images/zimmer/'
         elif self.game_level == 2:
             hog.source_image = "garten.png"
-
         last_added = -1
         for item in hog.hidden_objects[self.game_level]:
             if item["id"] > last_added:
@@ -53,12 +52,9 @@ class GameScreen(Screen):
                 bl.id = last_added
                 img = Image(source=f'{prefix}{item["name"]}.png', size=(100,100), size_hint=(None,None), keep_ratio=True)
                 bl.add_widget(img)
-                cb = CheckBox()
-                cb.active = hog.is_item_found(item["name"])
-                cb.readonly = True
-                bl.add_widget(cb)
                 status_area = self.ids['status_area']
                 status_area.add_widget(bl)    
+        hog.canvas.ask_update()
 
 class OptionsScreen(Screen):
     pass    
@@ -74,17 +70,12 @@ class IntroScreen(Screen):
 class LevelSelecterScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-    
-    def select_level_press(self, selected_level):       
+        
+    def select_level_press(self, selected_level):        
         app = App.get_running_app()        
         game_screen = app.root.get_screen('game')  # Get the instance of GameScreen
         game_screen.game_level = int(selected_level)
         app.root.current = 'game'
-
-    #def select_level_press(self, selected_level):        
-        #app = App.get_running_app()        
-        #GameScreen.game_level = int(selected_level)
-        #app.root.current = 'game'
 
 class CustomCarousel(Carousel):
 
@@ -120,17 +111,18 @@ class BoundedScatter(Scatter):
         super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    scatter = ObjectProperty(None)
-    image = ObjectProperty(None)
     source_image = StringProperty('image.jpg')
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.app = App.get_running_app()
+        self.bind(source_image=self.update_image_source)
+        self.app = App.get_running_app()        
+        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
+        self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.game_screen = None
-
-        
-        
+        self.scatter.add_widget(self.image)
+        self.add_widget(self.scatter)
+        self.scatter.size = self.image.size
+        self.scatter.center = self.center
         self.hidden_objects = [
             [
                 {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
@@ -145,9 +137,7 @@ class HiddenObjectGame(Widget):
                 {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":False},
                 {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":False},
                 {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False},
-                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}
-
-            
+                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}            
             ],
             [
                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
@@ -162,12 +152,13 @@ class HiddenObjectGame(Widget):
                 {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":False},
                 {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":False},
                 {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
-            ]
-            
-            ]        
+            ]            
+        ]       
         
+    def update_image_source(self, instance, value):
+        self.image.source = value
 
-    def flash_screen(self, color=(0, 1, 0, 1)):  # green
+    def flash_screen(self, color=(1, 0, 0, 1)):  # Default color is red
         flash = Widget(size=Window.size, pos=(0, 0))
         
         with flash.canvas:
@@ -203,23 +194,16 @@ class HiddenObjectGame(Widget):
             for obj in self.hidden_objects[self.game_screen.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
-                item_name = obj["name"]
-                
+                item_name = obj["name"]             
                 
                 if x < img_x < x + w and y < img_y < y + h:
                     # print("Hidden object found!")
                     # self.hidden_objects.remove(obj)
+                    obj["found"] = True
                     self.flash_screen()
                     break
             
             return super().on_touch_up(touch)
-
-    def toggle_item(self, item_name):
-        for obj in self.hidden_objects[self.game_level]:
-            if obj["name"] == item_name:
-                obj["found"] = not obj["found"]
-                break
-
 
 class HiddenObjectApp(App):
     
