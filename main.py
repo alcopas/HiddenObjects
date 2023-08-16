@@ -19,7 +19,6 @@ from kivy.core.audio import SoundLoader
 from kivy.uix.carousel import Carousel
 from kivy.uix.image import AsyncImage
 from kivy.uix.checkbox import CheckBox
-from kivy.graphics.instructions import ColorMatrix
 
 DEBUG = False
 
@@ -34,12 +33,17 @@ class GameScreen(Screen):
     game_level = NumericProperty(0)
     def on_enter(self):
         hog = self.ids['game_area']
+        hog.game_screen = self 
+        prefix = ''
         if self.game_level == 0:
-            hog.source_image = "Teich.png"
+            pass
+            #hog.source_image = "./images/teich/teich.png"
+            #prefix = './images/teich/'
         elif self.game_level == 1:
-            hog.source_image = "Zimmer.png"
+            hog.source_image = "./images/zimmer/zimmer.png"
+            prefix = './images/zimmer/'
         elif self.game_level == 2:
-            hog.source_image = "Garten.png"
+            hog.source_image = "garten.png"
 
         last_added = -1
         for item in hog.hidden_objects[self.game_level]:
@@ -47,7 +51,7 @@ class GameScreen(Screen):
                 bl = BoxLayout()
                 last_added = item["id"]
                 bl.id = last_added
-                img = Image(source=f'{item["name"]}.png', size=(100,100), size_hint=(None,None), keep_ratio=True)
+                img = Image(source=f'{prefix}{item["name"]}.png', size=(100,100), size_hint=(None,None), keep_ratio=True)
                 bl.add_widget(img)
                 cb = CheckBox()
                 cb.active = hog.is_item_found(item["name"])
@@ -70,11 +74,17 @@ class IntroScreen(Screen):
 class LevelSelecterScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
-    def select_level_press(self, selected_level):        
+    
+    def select_level_press(self, selected_level):       
         app = App.get_running_app()        
-        GameScreen.game_level = int(selected_level)
+        game_screen = app.root.get_screen('game')  # Get the instance of GameScreen
+        game_screen.game_level = int(selected_level)
         app.root.current = 'game'
+
+    #def select_level_press(self, selected_level):        
+        #app = App.get_running_app()        
+        #GameScreen.game_level = int(selected_level)
+        #app.root.current = 'game'
 
 class CustomCarousel(Carousel):
 
@@ -117,6 +127,7 @@ class HiddenObjectGame(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app()
+        self.game_screen = None
 
         
         
@@ -133,7 +144,7 @@ class HiddenObjectGame(Widget):
                 {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":False},
                 {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":False},
                 {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":False},
-                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False}
+                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False},
                 {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}
 
             
@@ -174,7 +185,7 @@ class HiddenObjectGame(Widget):
         anim.start(flash)
     
     def is_item_found(self, item_name):
-        for obj in self.hidden_objects[GameScreen.game_level]:
+        for obj in self.hidden_objects[self.game_screen.game_level]:
             if obj["name"] == item_name and obj["found"]:
                 return True
         return False
@@ -189,7 +200,7 @@ class HiddenObjectGame(Widget):
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects[GameScreen.game_level]:
+            for obj in self.hidden_objects[self.game_screen.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
                 item_name = obj["name"]
@@ -202,14 +213,6 @@ class HiddenObjectGame(Widget):
                     break
             
             return super().on_touch_up(touch)
-        class HiddenObjectGame(Widget):
-    # ... (other code)
-
-    def is_item_found(self, item_name):
-        for obj in self.hidden_objects[self.game_level]:
-            if obj["name"] == item_name:
-                return obj["found"]
-        return False
 
     def toggle_item(self, item_name):
         for obj in self.hidden_objects[self.game_level]:
