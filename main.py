@@ -31,6 +31,7 @@ class MainMenuScreen(Screen):
 
 class GameScreen(Screen):
     game_level = NumericProperty(0)
+    widget_refs = {} 
     def on_enter(self):
         hog = self.ids['game_area']
         hog.game_screen = self 
@@ -45,16 +46,17 @@ class GameScreen(Screen):
         elif self.game_level == 2:
             hog.source_image = "garten.png"
         last_added = -1
+        our_size = (100, 100) if len(hog.hidden_objects) < 6 else (75,75)
         for item in hog.hidden_objects[self.game_level]:
             if item["id"] > last_added:
                 bl = BoxLayout()
                 last_added = item["id"]
                 bl.id = last_added
-                img = Image(source=f'{prefix}{item["name"]}.png', size=(100,100), size_hint=(None,None), keep_ratio=True)
+                img = Image(source=f'{prefix}{item["name"]}.png', size=our_size, size_hint=(None,None), keep_ratio=True)
+                self.widget_refs[f"img_{item['name']}"] = img 
                 bl.add_widget(img)
                 status_area = self.ids['status_area']
                 status_area.add_widget(bl)    
-        hog.canvas.ask_update()
 
 class OptionsScreen(Screen):
     pass    
@@ -140,7 +142,7 @@ class HiddenObjectGame(Widget):
                 {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}            
             ],
             [
-               {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
+                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
                 {"position": (567, 644), "size": (23, 7), "name":"brief", "id":1, "found":False},
                 {"position": (7, 586), "size": (80, 37), "name":"rose", "id":2, "found":False},
                 {"position": (423, 1139), "size": (29, 17), "name":"pinguin", "id":3, "found":False},
@@ -200,10 +202,27 @@ class HiddenObjectGame(Widget):
                     # print("Hidden object found!")
                     # self.hidden_objects.remove(obj)
                     obj["found"] = True
-                    self.flash_screen()
+                    self.update_object_found(obj["name"])
+                    #self.flash_screen()
                     break
             
             return super().on_touch_up(touch)
+
+    def update_object_found(self, object_name):
+        prefix = ''
+        if self.game_screen.game_level == 0:
+            prefix = './images/teich/'
+        elif self.game_screen.game_level == 1:
+            prefix = './images/zimmer/'
+        elif self.game_screen.game_level == 2:
+            prefix = './images/something/'
+
+        greyscale_img_path = f'{prefix}{object_name}_gs.png'
+        
+
+        img_widget = self.game_screen.widget_refs.get(f'img_{object_name}')
+        if img_widget:
+            img_widget.source = greyscale_img_path
 
 class HiddenObjectApp(App):
     
