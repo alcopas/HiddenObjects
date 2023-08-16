@@ -122,18 +122,19 @@ class HiddenObjectGame(Widget):
         
         self.hidden_objects = [
             [
-                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
-                {"position": (567, 644), "size": (23, 7), "name":"brief", "id":1, "found":False},
-                {"position": (7, 586), "size": (80, 37), "name":"rose", "id":2, "found":False},
-                {"position": (423, 1139), "size": (29, 17), "name":"pinguin", "id":3, "found":False},
-                {"position": (399, 1181), "size": (24, 17), "name":"kette", "id":4, "found":False},
-                {"position": (23, 225), "size": (45, 48), "name":"hase", "id":5, "found":False},
-                {"position": (323, 395), "size": (21, 25), "name":"cupcake", "id":6, "found":False},
-                {"position": (522, 526), "size": (24, 17), "name":"socke", "id":7, "found":False},
-                {"position": (533, 543), "size": (17, 18), "name":"socke", "id":7, "found":False},
-                {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":False},
-                {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":False},
-                {"position": (1046, 1010), "size": (24, 22), "name":"kazte", "id":10, "found":False}
+                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
+                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":False},
+                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":False},
+                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":False},
+                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":False},
+                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":False},
+                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":False},
+                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":False},
+                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":False},
+                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":False},
+                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":False},
+                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False}
+                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}
 
             
             ],
@@ -149,7 +150,7 @@ class HiddenObjectGame(Widget):
                 {"position": (533, 543), "size": (17, 18), "name":"socke", "id":7, "found":False},
                 {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":False},
                 {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":False},
-                {"position": (1046, 1010), "size": (24, 22), "name":"kazte", "id":10, "found":False}
+                {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
             ]
             
             ]        
