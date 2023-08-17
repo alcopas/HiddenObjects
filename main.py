@@ -92,7 +92,7 @@ class CustomCarousel(Carousel):
         return super(CustomCarousel, self).on_touch_move(touch)
 
 class BoundedScatter(Scatter):
-    def on_transform(self, *args):
+    def on_transformx(self, *args):
         super().on_transform(*args)
         # Ensure the child (the image) is entirely inside the window.
         # Get window size
@@ -118,7 +118,7 @@ class BoundedScatter(Scatter):
 
 class HiddenObjectGame(Widget):
     #source_image = StringProperty('image.jpg')
-    source_image = 'image.jpg'
+    source_image = './images/teich/teich.png'
     app = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -158,7 +158,6 @@ class HiddenObjectGame(Widget):
         return False
     
     def on_touch_up(self, touch):
-        return super().on_touch_up(touch)
         if self.scatter.collide_point(*touch.pos):
             # Convert touch location to Scatter's local coordinates
             local_touch = self.scatter.to_local(*touch.pos, relative=False)
@@ -211,7 +210,7 @@ class GameState(EventDispatcher):
     game_level = None
     widget_refs = None 
     hidden_objects = []
-    source_image = StringProperty('image.jpg')
+    #source_image = StringProperty('image.jpg')
     def __init__(self, **kwargs):
         self.music = SoundLoader.load('intro_music.mp3')
         self.game_level = 0
