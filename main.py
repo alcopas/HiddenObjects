@@ -126,7 +126,7 @@ class HiddenObjectGame(Widget):
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
         self.scatter.size = self.image.size
-        self.scatter.center = (1600,1200)         
+        #self.scatter.center = (1600,1200)         
         
     def update_image_source(self, instance, value):
         self.image.source = value
