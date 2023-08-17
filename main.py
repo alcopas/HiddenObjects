@@ -7,6 +7,7 @@ from kivy.graphics import Color, Rectangle
 from kivy.properties import (
     NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty, StringProperty
 )
+from kivy.event import EventDispatcher
 from kivy.uix.scatter import Scatter
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
@@ -14,7 +15,6 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
-from kivy.cache import Cache
 from kivy.core.audio import SoundLoader
 from kivy.uix.carousel import Carousel
 from kivy.uix.label import Label
@@ -36,15 +36,15 @@ class GameScreen(Screen):
         app = App.get_running_app()
         if app.game_state.game_level == 0:
             #pass
-            hog.source_image = "./images/teich/teich.png"
+            app.game_state.source_image = "./images/teich/teich.png"
             prefix = './images/teich/'
         elif app.game_state.game_level == 1:
-            hog.source_image = "./images/zimmer/zimmer.png"
+            app.game_state.source_image = "./images/zimmer/zimmer.png"
             prefix = './images/zimmer/'
         elif app.game_state.game_level == 2:
-            hog.source_image = "garten.png"
+            app.game_state.source_image = "garten.png"
         last_added = -1
-        our_size = (100, 100) if len(hog.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
+        our_size = (100, 100) if len(app.game_state.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
         # TODO: make this math better
         status_area.clear_widgets()
         bl = BoxLayout()
@@ -53,7 +53,7 @@ class GameScreen(Screen):
         bb.on_press = self.bb_press
         bl.add_widget(bb)
         status_area.add_widget(bl) 
-        for item in hog.hidden_objects[app.game_state.game_level]:
+        for item in app.game_state.hidden_objects[app.game_state.game_level]:
             if item["id"] > last_added:
                 bl = BoxLayout()
                 last_added = item["id"]
@@ -125,46 +125,14 @@ class HiddenObjectGame(Widget):
     app = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.bind(source_image=self.update_image_source)
-        self.app = App.get_running_app()        
+        self.app = App.get_running_app() 
+        self.app.game_state.bind(source_image=self.update_image_source)
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
         self.scatter.size = self.image.size
-        self.scatter.center = self.center
-        self.hidden_objects = [
-            [
-                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":True},
-                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":True},
-                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":True},
-                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":True},
-                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":True},
-                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":True},
-                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":True},
-                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":True},
-                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":True},
-                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":True},
-                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":True},
-                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":True},
-                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":True}            
-            ],
-            [
-                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
-                {"position": (567, 644), "size": (23, 7), "name":"brief", "id":1, "found":False},
-                {"position": (7, 586), "size": (80, 37), "name":"rose", "id":2, "found":False},
-                {"position": (423, 1139), "size": (29, 17), "name":"pinguin", "id":3, "found":False},
-                {"position": (399, 1181), "size": (24, 17), "name":"kette", "id":4, "found":False},
-                {"position": (23, 225), "size": (45, 48), "name":"hase", "id":5, "found":False},
-                {"position": (323, 395), "size": (21, 25), "name":"cupcake", "id":6, "found":False},
-                {"position": (522, 526), "size": (24, 17), "name":"socke", "id":7, "found":False},
-                {"position": (533, 543), "size": (17, 18), "name":"socke", "id":7, "found":False},
-                {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":False},
-                {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":False},
-                {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
-            ]            
-        ]       
-        
+        self.scatter.center = self.center         
         
     def update_image_source(self, instance, value):
         self.image.source = value
@@ -187,7 +155,7 @@ class HiddenObjectGame(Widget):
         anim.start(flash)
     
     def is_item_found(self, item_name):
-        for obj in self.hidden_objects[self.app.game_state.game_level]:
+        for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
             if obj["name"] == item_name and obj["found"]:
                 return True
         return False
@@ -196,13 +164,11 @@ class HiddenObjectGame(Widget):
         if self.scatter.collide_point(*touch.pos):
             # Convert touch location to Scatter's local coordinates
             local_touch = self.scatter.to_local(*touch.pos, relative=False)
-
-            app = App.get_running_app()
             # Convert local_touch from Scatter's coordinates to the image's current scale and position
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects[self.app.game_state.game_level]:
+            for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
                 item_name = obj["name"]             
@@ -211,7 +177,7 @@ class HiddenObjectGame(Widget):
                     # print("Hidden object found!")
                     # self.hidden_objects.remove(obj)
                     obj["found"] = True
-                    for item in self.hidden_objects[self.app.game_state.game_level]:
+                    for item in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
                         if item["name"] == obj["name"]:
                             item["found"] = True
                     self.update_object_found(obj["name"])
@@ -221,7 +187,7 @@ class HiddenObjectGame(Widget):
             return super().on_touch_up(touch)
         
     def check_all_found(self):
-        all_found = all(obj["found"] for obj in self.hidden_objects[self.app.game_state.game_level])
+        all_found = all(obj["found"] for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level])
         game_area = self.parent.parent.ids['game_area']
         if all_found:            
             congratulation_label = Label(
@@ -258,15 +224,47 @@ class HiddenObjectGame(Widget):
 
 
             
-class GameState():
+class GameState(EventDispatcher):
     music = None
     game_level = None
     widget_refs = None 
-    status_area = ObjectProperty()
+    hidden_objects = []
+    source_image = StringProperty('image.jpg')
     def __init__(self, **kwargs):
         self.music = SoundLoader.load('intro_music.mp3')
         self.game_level = 0
         self.widget_refs = {}
+        self.hidden_objects = [
+            [
+                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":True},
+                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":True},
+                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":True},
+                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":True},
+                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":True},
+                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":True},
+                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":True},
+                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":True},
+                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":True},
+                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":True},
+                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":True},
+                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":True},
+                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":True}            
+            ],
+            [
+                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
+                {"position": (567, 644), "size": (23, 7), "name":"brief", "id":1, "found":False},
+                {"position": (7, 586), "size": (80, 37), "name":"rose", "id":2, "found":False},
+                {"position": (423, 1139), "size": (29, 17), "name":"pinguin", "id":3, "found":False},
+                {"position": (399, 1181), "size": (24, 17), "name":"kette", "id":4, "found":False},
+                {"position": (23, 225), "size": (45, 48), "name":"hase", "id":5, "found":False},
+                {"position": (323, 395), "size": (21, 25), "name":"cupcake", "id":6, "found":False},
+                {"position": (522, 526), "size": (24, 17), "name":"socke", "id":7, "found":False},
+                {"position": (533, 543), "size": (17, 18), "name":"socke", "id":7, "found":False},
+                {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":False},
+                {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":False},
+                {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
+            ]            
+        ]  
 
 class HiddenObjectApp(App):
     game_state = None
