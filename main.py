@@ -92,6 +92,7 @@ class CustomCarousel(Carousel):
         return super(CustomCarousel, self).on_touch_move(touch)
 
 class BoundedScatter(Scatter):
+
     def on_transform(self, *args):
         if not self.parent:
             return super().on_transform(*args)
@@ -99,25 +100,30 @@ class BoundedScatter(Scatter):
         w, h = self.parent.size
         sw, sh = self.children[0].width * self.scale, self.children[0].height * self.scale
 
-        self.x = max(min(self.x, 0), w - sw)
-        self.y = max(min(self.y, 0), h - sh)
+        self.x = min(max(self.x, w - sw), 0)
+        self.y = min(max(self.y, h - sh), 0)
 
         return super().on_transform(*args)
-
 
 class HiddenObjectGame(Widget):
     source_image = StringProperty('image.jpg')
     app = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app() 
         self.app.game_state.bind(source_image=self.update_image_source)
+
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
+
+        # Ensure scatter size is set to the image's size
+        self.scatter.size = self.image.size
+
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
-        self.scatter.size = self.image.size
-        #self.scatter.center = (1600,1200)         
+
+       
         
     def update_image_source(self, instance, value):
         self.image.source = value
