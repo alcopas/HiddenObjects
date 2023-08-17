@@ -25,47 +25,43 @@ class MainMenuScreen(Screen):
 
     def on_leave(self):
         app = App.get_running_app()
-        if app.music:
-            app.music.stop()
+        if app.game_state.music:
+            app.game_state.music.stop()
 
-class GameScreen(Screen):
-    game_level = NumericProperty(0)
-    widget_refs = {} 
-    status_area = ObjectProperty() 
+class GameScreen(Screen): 
     def on_enter(self):        
         hog = self.ids['game_area']
-        self.status_area = self.ids['status_area'] 
-        hog.game_screen = self 
+        status_area = self.ids['status_area']
         prefix = ''
-        if self.game_level == 0:
+        app = App.get_running_app()
+        if app.game_state.game_level == 0:
             #pass
             hog.source_image = "./images/teich/teich.png"
             prefix = './images/teich/'
-        elif self.game_level == 1:
+        elif app.game_state.game_level == 1:
             hog.source_image = "./images/zimmer/zimmer.png"
             prefix = './images/zimmer/'
-        elif self.game_level == 2:
+        elif app.game_state.game_level == 2:
             hog.source_image = "garten.png"
         last_added = -1
-        our_size = (100, 100) if len(hog.hidden_objects[self.game_level]) < 6 else (50,50)
+        our_size = (100, 100) if len(hog.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
         # TODO: make this math better
-        status_area = self.ids['status_area']
+        status_area.clear_widgets()
         bl = BoxLayout()
         bb = Button()
         bb.text = "BACK"
-        bb.id = "back_button"
         bb.on_press = self.bb_press
         bl.add_widget(bb)
         status_area.add_widget(bl) 
-        for item in hog.hidden_objects[self.game_level]:
+        for item in hog.hidden_objects[app.game_state.game_level]:
             if item["id"] > last_added:
                 bl = BoxLayout()
                 last_added = item["id"]
-                bl.id = last_added
                 img = Image(source=f'{prefix}{item["name"]}.png', size=our_size, size_hint=(None,None), keep_ratio=True)
-                self.widget_refs[f"img_{item['name']}"] = img 
+                app.game_state.widget_refs[f"img_{item['name']}"] = img 
                 bl.add_widget(img)                
                 status_area.add_widget(bl)    
+        hog.check_all_found()
     def bb_press(self):
         app = App.get_running_app()
         app.root.current = 'levels'
@@ -79,8 +75,8 @@ class IntroScreen(Screen):
         super().__init__(**kwargs)
     def on_enter(self):
         app = App.get_running_app()
-        if app.music:
-            app.music.play()
+        if app.game_state.music:
+            app.game_state.music.play()
 
 class LevelSelecterScreen(Screen):
     def __init__(self, **kwargs):
@@ -88,8 +84,7 @@ class LevelSelecterScreen(Screen):
         
     def select_level_press(self, selected_level):        
         app = App.get_running_app()        
-        game_screen = app.root.get_screen('game')  # Get the instance of GameScreen
-        game_screen.game_level = int(selected_level)
+        app.game_state.game_level = int(selected_level)
         app.root.current = 'game'
 
 class CustomCarousel(Carousel):
@@ -127,32 +122,32 @@ class BoundedScatter(Scatter):
 
 class HiddenObjectGame(Widget):
     source_image = StringProperty('image.jpg')
+    app = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bind(source_image=self.update_image_source)
         self.app = App.get_running_app()        
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
-        self.game_screen = None
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
         self.scatter.size = self.image.size
         self.scatter.center = self.center
         self.hidden_objects = [
             [
-                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
-                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":False},
-                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":False},
-                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":False},
-                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":False},
-                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":False},
-                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":False},
-                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":False},
-                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":False},
-                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":False},
-                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":False},
-                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False},
-                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}            
+                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":True},
+                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":True},
+                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":True},
+                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":True},
+                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":True},
+                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":True},
+                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":True},
+                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":True},
+                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":True},
+                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":True},
+                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":True},
+                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":True},
+                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":True}            
             ],
             [
                 {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
@@ -169,6 +164,7 @@ class HiddenObjectGame(Widget):
                 {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
             ]            
         ]       
+        
         
     def update_image_source(self, instance, value):
         self.image.source = value
@@ -191,7 +187,7 @@ class HiddenObjectGame(Widget):
         anim.start(flash)
     
     def is_item_found(self, item_name):
-        for obj in self.hidden_objects[self.game_screen.game_level]:
+        for obj in self.hidden_objects[self.app.game_state.game_level]:
             if obj["name"] == item_name and obj["found"]:
                 return True
         return False
@@ -206,7 +202,7 @@ class HiddenObjectGame(Widget):
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
-            for obj in self.hidden_objects[self.game_screen.game_level]:
+            for obj in self.hidden_objects[self.app.game_state.game_level]:
                 x, y = obj["position"]
                 w, h = obj["size"]
                 item_name = obj["name"]             
@@ -215,7 +211,7 @@ class HiddenObjectGame(Widget):
                     # print("Hidden object found!")
                     # self.hidden_objects.remove(obj)
                     obj["found"] = True
-                    for item in self.hidden_objects[self.game_screen.game_level]:
+                    for item in self.hidden_objects[self.app.game_state.game_level]:
                         if item["name"] == obj["name"]:
                             item["found"] = True
                     self.update_object_found(obj["name"])
@@ -223,27 +219,11 @@ class HiddenObjectGame(Widget):
                     break
             
             return super().on_touch_up(touch)
-
-    def update_object_found(self, object_name):
-        prefix = ''
-        if self.game_screen.game_level == 0:
-            prefix = './images/teich/'
-        elif self.game_screen.game_level == 1:
-            prefix = './images/zimmer/'
-        elif self.game_screen.game_level == 2:
-            prefix = './images/something/'
-
-        greyscale_img_path = f'{prefix}{object_name}_gs.png'
         
-
-        img_widget = self.game_screen.widget_refs.get(f'img_{object_name}')
-        if img_widget:
-            img_widget.source = greyscale_img_path
-
-
-        all_found = all(obj["found"] for obj in self.hidden_objects[self.game_screen.game_level])
-        if all_found:
-            game_area = self.parent.parent.ids['game_area']
+    def check_all_found(self):
+        all_found = all(obj["found"] for obj in self.hidden_objects[self.app.game_state.game_level])
+        game_area = self.parent.parent.ids['game_area']
+        if all_found:            
             congratulation_label = Label(
                 text="Congratulations! You've found all the items!",
                 font_size='16sp',
@@ -251,14 +231,47 @@ class HiddenObjectGame(Widget):
                 size=(400, 30),  # Set the size of the label
                 pos_hint={'center_x': 0.5, 'center_y': 0.5},  # Position in the center of the screen
             )
+            self.app.game_state.widget_refs["congrats_label"] = congratulation_label
             game_area.parent.parent.add_widget(congratulation_label) # add to the game_screen
+        else:
+            cl = self.app.game_state.widget_refs.get("congrats_label")
+            if cl:
+                game_area.parent.parent.remove_widget(cl)
+
+
+    def update_object_found(self, object_name):
+        prefix = ''
+        if self.app.game_state.game_level == 0:
+            prefix = './images/teich/'
+        elif self.app.game_state.game_level == 1:
+            prefix = './images/zimmer/'
+        elif self.app.game_state.game_level == 2:
+            prefix = './images/something/'
+
+        greyscale_img_path = f'{prefix}{object_name}_gs.png'
+        
+
+        img_widget = self.app.game_state.widget_refs.get(f'img_{object_name}')
+        if img_widget:
+            img_widget.source = greyscale_img_path
+        self.check_all_found()
+
+
             
+class GameState():
+    music = None
+    game_level = None
+    widget_refs = None 
+    status_area = ObjectProperty()
+    def __init__(self, **kwargs):
+        self.music = SoundLoader.load('intro_music.mp3')
+        self.game_level = 0
+        self.widget_refs = {}
 
 class HiddenObjectApp(App):
-    
-    music = None
+    game_state = None
     def build(self):
-        self.music = SoundLoader.load('intro_music.mp3')
+        self.game_state = GameState()
         Builder.load_file('layout.kv')
         sm = ScreenManager()
         
