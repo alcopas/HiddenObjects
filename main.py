@@ -32,11 +32,9 @@ class GameScreen(Screen):
     def on_enter(self):        
         hog = self.ids['game_area']
         status_area = self.ids['status_area']
-        prefix = ''
         app = App.get_running_app()
         prefix = app.game_state.get_prefix()
-        app.game_state.set_source_image()
-        last_added = -1
+        app.game_state.set_source_image()        
         our_size = (100, 100) if len(app.game_state.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
         # TODO: make this math better
         status_area.clear_widgets()
@@ -46,6 +44,7 @@ class GameScreen(Screen):
         bb.on_press = self.bb_press
         bl.add_widget(bb)
         status_area.add_widget(bl) 
+        last_added = -1
         for item in app.game_state.hidden_objects[app.game_state.game_level]:
             if item["id"] > last_added:
                 bl = BoxLayout()
@@ -56,6 +55,7 @@ class GameScreen(Screen):
                 bl.add_widget(img)                
                 status_area.add_widget(bl)    
         hog.check_all_found()
+
     def bb_press(self):
         app = App.get_running_app()
         app.root.current = 'levels'
@@ -166,7 +166,6 @@ class HiddenObjectGame(Widget):
                 x, y = obj["position"]
                 w, h = obj["size"]                
                 if x < img_x < x + w and y < img_y < y + h:
-                    obj["found"] = True
                     for item in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
                         if item["name"] == obj["name"]:
                             item["found"] = True
@@ -182,7 +181,7 @@ class HiddenObjectGame(Widget):
         if all_found:            
             congratulation_label = Label(
                 text="Congratulations! You've found all the items!",
-                font_size='16sp',
+                font_size='20sp',
                 size_hint=(None, None),  # Use None for fixed size
                 size=(400, 30),  # Set the size of the label
                 pos_hint={'center_x': 0.5, 'center_y': 0.5},  # Position in the center of the screen
@@ -197,9 +196,7 @@ class HiddenObjectGame(Widget):
 
     def update_object_found(self, object_name):
         prefix = self.app.game_state.get_prefix()
-        greyscale_img_path = f'{prefix}{object_name}_gs.png'
-        
-
+        greyscale_img_path = f'{prefix}{object_name}_gs.png'  
         img_widget = self.app.game_state.widget_refs.get(f'img_{object_name}')
         if img_widget:
             img_widget.source = greyscale_img_path
@@ -219,19 +216,19 @@ class GameState(EventDispatcher):
         self.widget_refs = {}
         self.hidden_objects = [
             [
-                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":True},
-                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":True},
-                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":True},
-                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":True},
-                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":True},
-                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":True},
-                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":True},
-                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":True},
-                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":True},
-                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":True},
-                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":True},
-                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":True},
-                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":True}            
+                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
+                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":False},
+                {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":False},
+                {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":False},
+                {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":False},
+                {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":False},
+                {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":False},
+                {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":False},
+                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":False},
+                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":False},
+                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":False},
+                {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False},
+                {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}            
             ],
             [
                 {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
