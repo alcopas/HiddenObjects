@@ -34,15 +34,8 @@ class GameScreen(Screen):
         status_area = self.ids['status_area']
         prefix = ''
         app = App.get_running_app()
-        if app.game_state.game_level == 0:
-            #pass
-            app.game_state.source_image = "./images/teich/teich.png"
-            prefix = './images/teich/'
-        elif app.game_state.game_level == 1:
-            app.game_state.source_image = "./images/zimmer/zimmer.png"
-            prefix = './images/zimmer/'
-        elif app.game_state.game_level == 2:
-            app.game_state.source_image = "garten.png"
+        prefix = app.game_state.get_prefix()
+        app.game_state.set_source_image()
         last_added = -1
         our_size = (100, 100) if len(app.game_state.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
         # TODO: make this math better
@@ -57,7 +50,8 @@ class GameScreen(Screen):
             if item["id"] > last_added:
                 bl = BoxLayout()
                 last_added = item["id"]
-                img = Image(source=f'{prefix}{item["name"]}.png', size=our_size, size_hint=(None,None), keep_ratio=True)
+                img_filename = f'{prefix}{item["name"]}.png' if not item["found"] else f'{prefix}{item["name"]}_gs.png'
+                img = Image(source=img_filename, size=our_size, size_hint=(None,None), keep_ratio=True)
                 app.game_state.widget_refs[f"img_{item['name']}"] = img 
                 bl.add_widget(img)                
                 status_area.add_widget(bl)    
@@ -132,7 +126,7 @@ class HiddenObjectGame(Widget):
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
         self.scatter.size = self.image.size
-        self.scatter.center = self.center         
+        self.scatter.center = (1600,1200)         
         
     def update_image_source(self, instance, value):
         self.image.source = value
@@ -170,12 +164,8 @@ class HiddenObjectGame(Widget):
             
             for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
                 x, y = obj["position"]
-                w, h = obj["size"]
-                item_name = obj["name"]             
-                
+                w, h = obj["size"]                
                 if x < img_x < x + w and y < img_y < y + h:
-                    # print("Hidden object found!")
-                    # self.hidden_objects.remove(obj)
                     obj["found"] = True
                     for item in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
                         if item["name"] == obj["name"]:
@@ -206,14 +196,7 @@ class HiddenObjectGame(Widget):
 
 
     def update_object_found(self, object_name):
-        prefix = ''
-        if self.app.game_state.game_level == 0:
-            prefix = './images/teich/'
-        elif self.app.game_state.game_level == 1:
-            prefix = './images/zimmer/'
-        elif self.app.game_state.game_level == 2:
-            prefix = './images/something/'
-
+        prefix = self.app.game_state.get_prefix()
         greyscale_img_path = f'{prefix}{object_name}_gs.png'
         
 
@@ -265,6 +248,23 @@ class GameState(EventDispatcher):
                 {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
             ]            
         ]  
+    def get_prefix(self):
+        prefix = ''
+        if self.game_level == 0:
+            prefix = './images/teich/'
+        elif self.game_level == 1:
+            prefix = './images/zimmer/'
+        elif self.game_level == 2:
+            prefix = 'huh'
+        return prefix
+    
+    def set_source_image(self):
+        if self.game_level == 0:
+            self.source_image = "./images/teich/teich.png"
+        elif self.game_level == 1:
+            self.source_image = "./images/zimmer/zimmer.png"
+        elif self.game_level == 2:
+            self.source_image = "garten.png"
 
 class HiddenObjectApp(App):
     game_state = None
