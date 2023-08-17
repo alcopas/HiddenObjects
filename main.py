@@ -93,27 +93,17 @@ class CustomCarousel(Carousel):
 
 class BoundedScatter(Scatter):
     def on_transform(self, *args):
-        # Ensure the child (the image) is entirely inside the window.
-        # Get window size
-        w, h = self.parent.size if self.parent else Window.size
+        if not self.parent:
+            return super().on_transform(*args)
 
-        # Get the size of the image inside the Scatter after applying the scale
-        iw, ih = self.children[0].size
-        sw, sh = iw * self.scale, ih * self.scale  # Scaled width and height
-        
-        # Adjust x position
-        if self.x > 0:
-            self.x = 0
-        if self.right < w:
-            self.x = w - sw
+        w, h = self.parent.size
+        sw, sh = self.children[0].width * self.scale, self.children[0].height * self.scale
 
-        # Adjust y position
-        if self.y > 0:
-            self.y = 0
-        if self.top < h:
-            self.y = h - sh
+        self.x = max(min(self.x, 0), w - sw)
+        self.y = max(min(self.y, 0), h - sh)
 
         return super().on_transform(*args)
+
 
 class HiddenObjectGame(Widget):
     source_image = StringProperty('image.jpg')
