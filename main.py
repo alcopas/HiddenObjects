@@ -117,13 +117,12 @@ class BoundedScatter(Scatter):
         super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    #source_image = StringProperty('image.jpg')
-    source_image = './images/teich/teich.png'
+    source_image = StringProperty('image.jpg')
     app = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app() 
-        #self.app.game_state.bind(source_image=self.update_image_source)
+        self.app.game_state.bind(source_image=self.update_image_source)
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.scatter.add_widget(self.image)
@@ -211,7 +210,7 @@ class GameState(EventDispatcher):
     game_level = None
     widget_refs = None 
     hidden_objects = []
-    #source_image = StringProperty('image.jpg')
+    source_image = StringProperty('image.jpg')
     def __init__(self, **kwargs):
         self.music = SoundLoader.load('intro_music.mp3')
         self.game_level = 0
@@ -294,8 +293,6 @@ class HiddenObjectApp(App):
         sm.current = 'intro'
 
         return sm
-    def xon_stop(self):
-        self.game_state.save_hidden_objects()  # Save before quitting ChatGPT
     
 if __name__ == "__main__":
     HiddenObjectApp().run()
