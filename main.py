@@ -173,6 +173,7 @@ class HiddenObjectGame(Widget):
                         if item["name"] == obj["name"]:
                             item["found"] = True
                     self.update_object_found(obj["name"])
+                    self.app.game_state.save_hidden_objects()
                     #self.flash_screen()
                     break
             
@@ -293,7 +294,7 @@ class HiddenObjectApp(App):
         sm.current = 'intro'
 
         return sm
-    def on_stop(self):
+    def xon_stop(self):
         self.game_state.save_hidden_objects()  # Save before quitting ChatGPT
     
 if __name__ == "__main__":
