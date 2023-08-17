@@ -17,8 +17,7 @@ from kivy.lang import Builder
 from kivy.cache import Cache
 from kivy.core.audio import SoundLoader
 from kivy.uix.carousel import Carousel
-from kivy.uix.image import AsyncImage
-from kivy.uix.checkbox import CheckBox
+from kivy.uix.label import Label
 
 DEBUG = False
 
@@ -32,8 +31,10 @@ class MainMenuScreen(Screen):
 class GameScreen(Screen):
     game_level = NumericProperty(0)
     widget_refs = {} 
-    def on_enter(self):
+    status_area = ObjectProperty() 
+    def on_enter(self):        
         hog = self.ids['game_area']
+        self.status_area = self.ids['status_area'] 
         hog.game_screen = self 
         prefix = ''
         if self.game_level == 0:
@@ -48,6 +49,14 @@ class GameScreen(Screen):
         last_added = -1
         our_size = (100, 100) if len(hog.hidden_objects[self.game_level]) < 6 else (50,50)
         # TODO: make this math better
+        status_area = self.ids['status_area']
+        bl = BoxLayout()
+        bb = Button()
+        bb.text = "BACK"
+        bb.id = "back_button"
+        bb.on_press = self.bb_press
+        bl.add_widget(bb)
+        status_area.add_widget(bl) 
         for item in hog.hidden_objects[self.game_level]:
             if item["id"] > last_added:
                 bl = BoxLayout()
@@ -55,9 +64,12 @@ class GameScreen(Screen):
                 bl.id = last_added
                 img = Image(source=f'{prefix}{item["name"]}.png', size=our_size, size_hint=(None,None), keep_ratio=True)
                 self.widget_refs[f"img_{item['name']}"] = img 
-                bl.add_widget(img)
-                status_area = self.ids['status_area']
+                bl.add_widget(img)                
                 status_area.add_widget(bl)    
+    def bb_press(self):
+        app = App.get_running_app()
+        app.root.current = 'levels'
+
 
 class OptionsScreen(Screen):
     pass    
@@ -224,6 +236,20 @@ class HiddenObjectGame(Widget):
         img_widget = self.game_screen.widget_refs.get(f'img_{object_name}')
         if img_widget:
             img_widget.source = greyscale_img_path
+
+
+        all_found = all(obj["found"] for obj in self.hidden_objects[self.game_screen.game_level])
+        if all_found:
+            game_area = self.parent.parent.ids['game_area']
+            congratulation_label = Label(
+                text="Congratulations! You've found all the items!",
+                font_size='16sp',
+                size_hint=(None, None),  # Use None for fixed size
+                size=(400, 30),  # Set the size of the label
+                pos_hint={'center_x': 0.5, 'center_y': 0.5},  # Position in the center of the screen
+            )
+            game_area.parent.parent.add_widget(congratulation_label) # add to the game_screen
+            
 
 class HiddenObjectApp(App):
     
