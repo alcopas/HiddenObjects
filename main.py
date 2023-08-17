@@ -93,6 +93,7 @@ class CustomCarousel(Carousel):
 
 class BoundedScatter(Scatter):
     def on_transform(self, *args):
+        super().on_transform(*args)
         # Ensure the child (the image) is entirely inside the window.
         # Get window size
         w, h = self.parent.size if self.parent else Window.size
