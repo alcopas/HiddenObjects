@@ -215,6 +215,9 @@ class HiddenObjectGame(Widget):
                     # print("Hidden object found!")
                     # self.hidden_objects.remove(obj)
                     obj["found"] = True
+                    for item in self.hidden_objects[self.game_screen.game_level]:
+                        if item["name"] == obj["name"]:
+                            item["found"] = True
                     self.update_object_found(obj["name"])
                     #self.flash_screen()
                     break
