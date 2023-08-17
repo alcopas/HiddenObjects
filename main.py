@@ -116,12 +116,13 @@ class BoundedScatter(Scatter):
         super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    source_image = StringProperty('image.jpg')
+    #source_image = StringProperty('image.jpg')
+    source_image = 'image.jpg'
     app = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = App.get_running_app() 
-        self.app.game_state.bind(source_image=self.update_image_source)
+        #self.app.game_state.bind(source_image=self.update_image_source)
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.scatter.add_widget(self.image)
@@ -156,6 +157,7 @@ class HiddenObjectGame(Widget):
         return False
     
     def on_touch_up(self, touch):
+        return super().on_touch_up(touch)
         if self.scatter.collide_point(*touch.pos):
             # Convert touch location to Scatter's local coordinates
             local_touch = self.scatter.to_local(*touch.pos, relative=False)
