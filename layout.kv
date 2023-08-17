@@ -32,7 +32,7 @@
             on_press: app.stop()
         Button:
             text: 'Load Game'
-            on_press: root.load_hidden_objects()
+            on_press: app.game_state.load_hidden_objects()
 
 <LevelSelecterScreen>:
     BoxLayout:

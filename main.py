@@ -262,14 +262,16 @@ class GameState(EventDispatcher):
         elif self.game_level == 2:
             self.source_image = "garten.png"
 
-    def save_hidden_objects(self, filename):
-        with open(filename, 'wb') as file:
+    def save_hidden_objects(self):
+        with open('hidden_objects.pkl', 'wb') as file:
             pickle.dump(self.hidden_objects, file)
 
-    def load_hidden_objects(self, filename):
+    def load_hidden_objects(self):
         try:
-            with open(filename, 'rb') as file:
+            with open('hidden_objects.pkl', 'rb') as file:
                 self.hidden_objects = pickle.load(file)
+            app = App.get_running_app() 
+            app.root.current = 'levels' 
         except FileNotFoundError:
             pass  # Handle missing file if needed #ChatGPT
 
@@ -277,7 +279,6 @@ class HiddenObjectApp(App):
     game_state = None
     def build(self):
         self.game_state = GameState()
-        self.game_state.load_hidden_objects('hidden_objects.pkl') #ChatGPT to load progress when reopening the app
         Builder.load_file('layout.kv')
         sm = ScreenManager()
         
@@ -291,7 +292,7 @@ class HiddenObjectApp(App):
 
         return sm
     def on_stop(self):
-        self.game_state.save_hidden_objects('hidden_objects.pkl')  # Save before quitting ChatGPT
+        self.game_state.save_hidden_objects()  # Save before quitting ChatGPT
     
 if __name__ == "__main__":
     HiddenObjectApp().run()
