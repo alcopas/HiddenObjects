@@ -1,3 +1,4 @@
+import pickle
 from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
@@ -201,9 +202,7 @@ class HiddenObjectGame(Widget):
         if img_widget:
             img_widget.source = greyscale_img_path
         self.check_all_found()
-
-
-            
+           
 class GameState(EventDispatcher):
     music = None
     game_level = None
@@ -263,10 +262,22 @@ class GameState(EventDispatcher):
         elif self.game_level == 2:
             self.source_image = "garten.png"
 
+    def save_hidden_objects(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self.hidden_objects, file)
+
+    def load_hidden_objects(self, filename):
+        try:
+            with open(filename, 'rb') as file:
+                self.hidden_objects = pickle.load(file)
+        except FileNotFoundError:
+            pass  # Handle missing file if needed #ChatGPT
+
 class HiddenObjectApp(App):
     game_state = None
     def build(self):
         self.game_state = GameState()
+        self.game_state.load_hidden_objects('hidden_objects.pkl') #ChatGPT to load progress when reopening the app
         Builder.load_file('layout.kv')
         sm = ScreenManager()
         
@@ -279,6 +290,8 @@ class HiddenObjectApp(App):
         sm.current = 'intro'
 
         return sm
+    def on_stop(self):
+        self.game_state.save_hidden_objects('hidden_objects.pkl')  # Save before quitting ChatGPT
     
 if __name__ == "__main__":
     HiddenObjectApp().run()

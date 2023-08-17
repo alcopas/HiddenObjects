@@ -17,7 +17,7 @@
             source: 'Slide3.jpg'
             allow_stretch: True
             keep_ratio: True
-<OptionsScreen>:
+
 <MainMenuScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -31,8 +31,8 @@
             background_color: 0.494, 1, 0.973, 1 
             on_press: app.stop()
         Button:
-            text: 'Options'
-            on_press: app.root.current = 'options'
+            text: 'Load Game'
+            on_press: root.load_hidden_objects()
 
 <LevelSelecterScreen>:
     BoxLayout:
