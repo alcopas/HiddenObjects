@@ -81,6 +81,10 @@ class LevelSelecterScreen(Screen):
         app = App.get_running_app()        
         app.game_state.game_level = int(selected_level)
         app.root.current = 'game'
+        #self.select_level_press = [
+            #["position":, "size":, "name":, "level_teich" ??????]
+        #]
+    
 
 class CustomCarousel(Carousel):
 
@@ -106,7 +110,7 @@ class BoundedScatter(Scatter):
         return super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    source_image = StringProperty('image.jpg')
+    source_image = StringProperty('image.jpg')  #should this change to .png ?
     app = None
 
     def __init__(self, **kwargs):
@@ -207,7 +211,7 @@ class GameState(EventDispatcher):
     hidden_objects = []
     source_image = StringProperty('image.jpg')
     def __init__(self, **kwargs):
-        self.music = SoundLoader.load('intro_music.mp3')
+        self.music = SoundLoader.load('intro_music.piano.mp3')
         self.game_level = 0
         self.widget_refs = {}
         self.hidden_objects = [
@@ -248,7 +252,7 @@ class GameState(EventDispatcher):
         elif self.game_level == 1:
             prefix = './images/zimmer/'
         elif self.game_level == 2:
-            prefix = 'huh'
+            prefix = './images/garten/'
         return prefix
     
     def set_source_image(self):
