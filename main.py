@@ -217,16 +217,16 @@ class GameState(EventDispatcher):
         self.hidden_objects = [
             [
                 {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
-                {"position": (60, 184), "size": (19, 16), "name":"münze", "id":1, "found":False},
+                {"position": (60, 184), "size": (19, 16), "name":"muenze", "id":1, "found":False},
                 {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":False},
                 {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":False},
                 {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":False},
                 {"position": (1568, 486), "size": (30, 29), "name":"blume", "id":4, "found":False},
                 {"position": (1533, 1050), "size": (22, 25), "name":"strohhalm", "id":5, "found":False},
                 {"position": (1555, 1028), "size": (20, 46), "name":"strohhalm", "id":5, "found":False},
-                {"position": (1053, 867), "size": (101, 43), "name":"schildkröte", "id":6, "found":False},
-                {"position": (590, 967), "size": (13, 18), "name":"eichhörnchen", "id":7, "found":False},
-                {"position": (603, 959), "size": (23, 44), "name":"eichhörnchen", "id":7, "found":False},
+                {"position": (1053, 867), "size": (101, 43), "name":"schildkroete", "id":6, "found":False},
+                {"position": (590, 967), "size": (13, 18), "name":"eichhoernchen", "id":7, "found":False},
+                {"position": (603, 959), "size": (23, 44), "name":"eichhoernchen", "id":7, "found":False},
                 {"position": (988, 457), "size": (38, 51), "name":"hamster_m", "id":8, "found":False},
                 {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":False}            
             ],
