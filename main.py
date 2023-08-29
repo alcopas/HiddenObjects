@@ -41,8 +41,9 @@ class GameScreen(Screen):
         status_area.clear_widgets()
         bl = BoxLayout()
         bb = Button()
-        bb.text = "BACK"
+        bb.text = "Zurück"
         bb.on_press = self.bb_press
+        self.sound_effect_2 = SoundLoader.load('click_sound.mp3')
         bl.add_widget(bb)
         status_area.add_widget(bl) 
         last_added = -1
@@ -60,7 +61,6 @@ class GameScreen(Screen):
     def bb_press(self):
         app = App.get_running_app()
         app.root.current = 'levels'
-
 
 class OptionsScreen(Screen):
     pass    
@@ -85,7 +85,6 @@ class LevelSelecterScreen(Screen):
             #["position":, "size":, "name":, "level_teich" ??????]
         #]
     
-
 class CustomCarousel(Carousel):
 
     def on_touch_move(self, touch):
@@ -120,6 +119,7 @@ class HiddenObjectGame(Widget):
 
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
+        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3') #I added a correct sound B)
 
         # Ensure scatter size is set to the image's size
         self.scatter.size = self.image.size
@@ -127,8 +127,8 @@ class HiddenObjectGame(Widget):
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
 
-       
-        
+
+
     def update_image_source(self, instance, value):
         self.image.source = value
 
@@ -182,7 +182,7 @@ class HiddenObjectGame(Widget):
         game_area = self.parent.parent.ids['game_area']
         if all_found:            
             congratulation_label = Label(
-                text="Congratulations! You've found all the items!",
+                text="Glückwunsch! Du hast alle Gegenstände Gefunden!",
                 font_size='20sp',
                 size_hint=(None, None),  # Use None for fixed size
                 size=(400, 30),  # Set the size of the label
@@ -202,6 +202,8 @@ class HiddenObjectGame(Widget):
         img_widget = self.app.game_state.widget_refs.get(f'img_{object_name}')
         if img_widget:
             img_widget.source = greyscale_img_path
+        if self.sound_effect_1:
+            self.sound_effect_1.play()
         self.check_all_found()
            
 class GameState(EventDispatcher):
@@ -211,6 +213,8 @@ class GameState(EventDispatcher):
     hidden_objects = []
     source_image = StringProperty('image.jpg')
     def __init__(self, **kwargs):
+        
+        self.sound_effect_2 = SoundLoader.load('click_sound.mp3')
         self.music = SoundLoader.load('intro_music.piano.mp3')
         self.game_level = 0
         self.widget_refs = {}

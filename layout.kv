@@ -5,20 +5,20 @@
         id: intro_carousel
         direction: 'right'
         Image:
-            source: 'Verabschiedung_text.png'
+            source: 'Verabschiedung_text_.png'
             allow_stretch: True
             keep_ratio: True
             #Damit das Bild dem Smartphone angepasst wird(ChatGPT)
         Image:
-            source: 'neues_Haus_text.png'
+            source: 'neues_Haus_text_.png'
             allow_stretch: True
             keep_ratio: True
         Image:
-            source: 'im_haus_text.png'
+            source: 'im_haus_text_.png'
             allow_stretch: True
             keep_ratio: True
         Image:
-            source: 'die_Reise_beginnt_text.png'
+            source: 'die_Reise_beginnt_text_.png'
             allow_stretch: True
             keep_ratio: True
 
@@ -28,29 +28,31 @@
         Label:
             text: 'Welcome to Hidden Object Game'
         Button:
-            text: 'New Game'
+            text: 'Neues Spiel'
+            background_color: 0.494, 1, 0.973, 1 
             on_press: app.root.current = 'levels' 
+        Button:
+            text: 'Spiel fortsetzen'
+            background_color: 0.494, 1, 0.973, 1 
+            on_press: app.game_state.load_hidden_objects()
         Button:
             text: 'Exit'
             background_color: 0.494, 1, 0.973, 1 
             on_press: app.stop()
-        Button:
-            text: 'Load Game'
-            on_press: app.game_state.load_hidden_objects()
 
 <LevelSelecterScreen>:
     BoxLayout:
         orientation: 'vertical'
         id: level_selector_boxlayout
         Label:
-            text: 'Select a Level'
+            text: 'Wähle ein Level aus'
         Slider:
             id: level_selector
             min: 0
             max: 1
             value: 0
         Button:
-            text: 'Select level'
+            text: 'Auswahl bestätigen'
             on_press: root.select_level_press(level_selector.value)        
             
 <GameScreen>:
