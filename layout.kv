@@ -54,7 +54,7 @@
         Button:
             text: 'Auswahl bestätigen'
             on_press: root.select_level_press(level_selector.value)   
-    AnchorLayout:  #ChatGPT 
+    AnchorLayout:  #ChatGPT
         anchor_x: 'right'
         anchor_y: 'top'
         Button:
@@ -90,9 +90,13 @@
                 StencilPop
 
         # Status area (10% of width)
-        BoxLayout:
-            orientation: 'vertical'
-            id: status_area
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
             size_hint_x: 0.1
-            padding: 5  # Add some padding around the status items
-            spacing: 5  # Add some space between status items
+            BoxLayout:
+                orientation: 'vertical'
+                id: status_area
+                padding: 5  # Add some padding around the status items
+                spacing: 5  # Add some space between status items
+        
