@@ -74,6 +74,10 @@ class IntroScreen(Screen):
             app.game_state.music.play()
 
 class LevelSelecterScreen(Screen):
+    def back_button_press(self):
+        app = App.get_running_app()
+        app.root.current = 'menu'
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         
@@ -265,7 +269,7 @@ class GameState(EventDispatcher):
         elif self.game_level == 1:
             self.source_image = "./images/zimmer/zimmer.png"
         elif self.game_level == 2:
-            self.source_image = "garten.png"
+            self.source_image = ".images/garten/garten.png"
 
     def save_hidden_objects(self):
         with open('hidden_objects.pkl', 'wb') as file:

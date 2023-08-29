@@ -53,7 +53,17 @@
             value: 0
         Button:
             text: 'Auswahl bestätigen'
-            on_press: root.select_level_press(level_selector.value)        
+            on_press: root.select_level_press(level_selector.value)   
+    AnchorLayout:  #ChatGPT 
+        anchor_x: 'right'
+        anchor_y: 'top'
+        Button:
+            text: 'Zurück'
+            size_hint: None, None
+            size: 100, 50
+            pos_hint: {'top': 1, 'right': 1}
+            on_press: root.back_button_press()
+    
             
 <GameScreen>:
     id: game_screen    
