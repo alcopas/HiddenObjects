@@ -251,6 +251,18 @@ class GameState(EventDispatcher):
                 {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":False},
                 {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":False},
                 {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
+            ],
+            [
+                {"position": (59, 602), "size": (84, 67), "name":"kuchen", "id":0, "found":False},
+                {"position": (19, 286), "size": (68, 90), "name":"topf", "id":1, "found":False},
+                {"position": (532, 338), "size": (37, 47), "name":"erdbeere", "id":2, "found":False},
+                {"position": (1326, 476), "size": (69, 139), "name":"zwerg", "id":3, "found":False},
+                {"position": (1541, 578), "size": (59, 26), "name":"karotte", "id":4, "found":False},
+                {"position": (1224, 1087) "size": (21, 23), "name":"ei", "id":5, "found":False},
+                {"position": (365, 1071), "size": (45, 47), "name":"hibiscus", "id":6, "found":False},
+                {"position": (826, 153), "size": (52, 31), "name":"kamm", "id":7, "found":False},
+                {"position": (508, 968), "size": (65, 57), "name":"waschbaer", "id":8, "found":False},
+                {"position": (617, 938), "size": (45, 42), "name":"brot", "id":9, "found":False}
             ]            
         ]  
     def get_prefix(self):
@@ -269,7 +281,7 @@ class GameState(EventDispatcher):
         elif self.game_level == 1:
             self.source_image = "./images/zimmer/zimmer.png"
         elif self.game_level == 2:
-            self.source_image = ".images/garten/garten.png"
+            self.source_image = "./images/garten/garten.png"
 
     def save_hidden_objects(self):
         with open('hidden_objects.pkl', 'wb') as file:
