@@ -258,7 +258,7 @@ class GameState(EventDispatcher):
                 {"position": (532, 338), "size": (37, 47), "name":"erdbeere", "id":2, "found":False},
                 {"position": (1326, 476), "size": (69, 139), "name":"zwerg", "id":3, "found":False},
                 {"position": (1541, 578), "size": (59, 26), "name":"karotte", "id":4, "found":False},
-                {"position": (1224, 1087) "size": (21, 23), "name":"ei", "id":5, "found":False},
+                {"position": (1224, 1087), "size": (21, 23), "name":"ei", "id":5, "found":False},
                 {"position": (365, 1071), "size": (45, 47), "name":"hibiscus", "id":6, "found":False},
                 {"position": (826, 153), "size": (52, 31), "name":"kamm", "id":7, "found":False},
                 {"position": (508, 968), "size": (65, 57), "name":"waschbaer", "id":8, "found":False},
