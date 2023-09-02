@@ -1,4 +1,32 @@
 #:kivy 2.2.0
+<OptionsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Options'
+            font_size: '24sp'
+
+        # Music toggle button
+        ToggleButton:
+            id: music_button
+            text: 'Music: On' if app.game_state.music_enabled else 'Music: Off'
+            on_release: root.toggle_music()
+            size_hint: None, None
+            size: 200, 50
+
+        # Sound effects toggle button
+        ToggleButton:
+            id: soundfx_button
+            text: 'Sound Effects: On' if app.game_state.soundfx_enabled else 'Sound Effects: Off'
+            on_release: root.toggle_soundfx()
+            size_hint: None, None
+            size: 200, 50
+
+        Button:
+            text: 'Back to Menu'
+            size_hint: None, None
+            size: 200, 50
+            on_release: app.root.current = 'menu'
 
 <IntroScreen>:
     CustomCarousel:
@@ -37,6 +65,11 @@
             background_color: (0.494, 1, 0.973, 1) if not root.is_all_found() else (.5, .5, .5, 1)
             on_press: app.root.current = 'levels'
             disabled: root.is_all_found()
+        Button:
+            text: 'Options'
+            background_color: 0.494, 1, 0.973, 1
+            on_release: app.root.current = 'options'  # Navigate to the OptionsScreen
+        
         Button:
             text: 'Exit'
             background_color: 0.494, 1, 0.973, 1 

@@ -28,6 +28,9 @@ class MainMenuScreen(Screen):
     def on_enter(self):
         app = App.get_running_app()
         app.game_state.load_hidden_objects()
+        if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
+            app.game_state.music.play()
+          
         # Update the button properties here based on the current game state
         button = self.ids['continue_button']
         if self.is_all_found():
@@ -63,6 +66,10 @@ class GameScreen(Screen):
         hog = self.ids['game_area']
         status_area = self.ids['status_area']
         app = App.get_running_app()
+        if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
+            app.game_state.music.play()
+        if app.game_state.music and not app.game_state.music_enabled:
+            app.game_state.music.stop()
         prefix = app.game_state.get_prefix()
         app.game_state.set_source_image()        
         our_size = (100, 100) if len(app.game_state.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
@@ -92,18 +99,47 @@ class GameScreen(Screen):
         app.root.current = 'levels'
 
 class OptionsScreen(Screen):
-    pass    
+    def toggle_music(self):
+        app = App.get_running_app()
+        app.game_state.music_enabled = not app.game_state.music_enabled
+        self.update_music_button_text()
+        app.game_state.save_hidden_objects()
+
+
+    def toggle_soundfx(self):
+        app = App.get_running_app()
+        app.game_state.soundfx_enabled = not app.game_state.soundfx_enabled
+        self.update_soundfx_button_text()
+        app.game_state.save_hidden_objects()
+
+    def update_music_button_text(self):
+        app = App.get_running_app()
+        music_button = self.ids['music_button']
+        if app.game_state.music_enabled:
+            music_button.text = 'Music: On'
+        else:
+            music_button.text = 'Music: Off'
+
+    def update_soundfx_button_text(self):
+        app = App.get_running_app()
+        soundfx_button = self.ids['soundfx_button']
+        if app.game_state.soundfx_enabled:
+            soundfx_button.text = 'Sound Effects: On'
+        else:
+            soundfx_button.text = 'Sound Effects: Off'
+
 
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     def on_enter(self):
         app = App.get_running_app()
+        app.game_state.load_hidden_objects()
         if app.game_state.music:
             app.game_state.music.stop()  # Stop any currently playing music
             app.game_state.music.unload()  # Unload the current music file
         app.game_state.music = SoundLoader.load('intro_music.piano.mp3')  # Load the intro music
-        if app.game_state.music:
+        if app.game_state.music and app.game_state.music_enabled:
             app.game_state.music.play()
 
 class LevelSelecterScreen(Screen):
@@ -252,7 +288,7 @@ class HiddenObjectGame(Widget):
         if img_widget:
             img_widget.source = greyscale_img_path
         if self.sound_effect_1:
-            self.sound_effect_1.play()
+            if self.app.game_state.soundfx_enabled: self.sound_effect_1.play()
         self.check_all_found()
            
 class GameState(EventDispatcher):
@@ -261,6 +297,9 @@ class GameState(EventDispatcher):
     widget_refs = None 
     hidden_objects = []
     source_image = StringProperty('image.jpg')
+    soundfx_enabled = True
+    music_enabled = True
+
     def __init__(self, **kwargs):
         
         self.sound_effect_2 = SoundLoader.load('click_sound.mp3')
@@ -329,15 +368,24 @@ class GameState(EventDispatcher):
             self.source_image = "./images/garten/garten.png"
 
     def save_hidden_objects(self):
+        data_to_save = {
+            "hidden_objects": self.hidden_objects,
+            "soundfx_enabled": self.soundfx_enabled,
+            "music_enabled": self.music_enabled,
+        }
+
         with open('hidden_objects.pkl', 'wb') as file:
-            pickle.dump(self.hidden_objects, file)
+            pickle.dump(data_to_save, file)
 
     def load_hidden_objects(self):
         try:
             with open('hidden_objects.pkl', 'rb') as file:
-                self.hidden_objects = pickle.load(file)
+                loaded_data = pickle.load(file)
+                self.hidden_objects = loaded_data.get("hidden_objects", [])
+                self.soundfx_enabled = loaded_data.get("soundfx_enabled", True)
+                self.music_enabled = loaded_data.get("music_enabled", True)
         except FileNotFoundError:
-            pass  # Handle missing file if needed #ChatGPT
+            pass  # Handle missing file if needed
 
 class OutroScreen(Screen):
     def __init__(self, **kwargs):
@@ -349,7 +397,7 @@ class OutroScreen(Screen):
             app.game_state.music.unload()  # Unload the current music file
         app.game_state.music = SoundLoader.load('piano_outro.mp3')  # Load the outro music
         if app.game_state.music:
-            app.game_state.music.play()   #ChatGPT
+            if app.game_state.music_enabled: app.game_state.music.play()   #ChatGPT
 
 class HiddenObjectApp(App):
     game_state = None
