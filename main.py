@@ -19,6 +19,8 @@ from kivy.lang import Builder
 from kivy.core.audio import SoundLoader
 from kivy.uix.carousel import Carousel
 from kivy.uix.label import Label
+from kivy.uix.screenmanager import NoTransition
+from kivy.uix.screenmanager import SlideTransition
 
 DEBUG = False
 
@@ -194,11 +196,23 @@ class HiddenObjectGame(Widget):
             )
             self.app.game_state.widget_refs["congrats_label"] = congratulation_label
             game_area.parent.parent.add_widget(congratulation_label) # add to the game_screen
+            # Transition to the outro screen without animation
+            self.app.all_levels_complete = self.check_all_levels_complete()  # Check if all levels are complete
+            if self.app.all_levels_complete:
+                app = App.get_running_app()
+                app.root.transition = SlideTransition(direction='left')
+                app.root.current = 'outro'
         else:
             cl = self.app.game_state.widget_refs.get("congrats_label")
             if cl:
                 game_area.parent.parent.remove_widget(cl)
-
+    
+    def check_all_levels_complete(self):
+    # Check if all levels are complete (all objects are found in all levels) ChatGPT
+        for level in self.app.game_state.hidden_objects:
+            if not all(obj["found"] for obj in level):
+                return False
+        return True
 
     def update_object_found(self, object_name):
         prefix = self.app.game_state.get_prefix()
@@ -296,8 +310,17 @@ class GameState(EventDispatcher):
         except FileNotFoundError:
             pass  # Handle missing file if needed #ChatGPT
 
+class OutroScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    def on_enter(self):
+        app = App.get_running_app()
+        if app.game_state.music:
+            app.game_state.music.play()
+
 class HiddenObjectApp(App):
     game_state = None
+    all_levels_complete = False
     def build(self):
         self.game_state = GameState()
         Builder.load_file('layout.kv')
@@ -308,6 +331,7 @@ class HiddenObjectApp(App):
         sm.add_widget(LevelSelecterScreen(name='levels'))
         sm.add_widget(GameScreen(name='game'))
         sm.add_widget(OptionsScreen(name='options'))
+        sm.add_widget(OutroScreen(name='outro'))
 
         sm.current = 'intro'
 

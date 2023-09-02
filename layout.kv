@@ -96,4 +96,24 @@
             size_hint_x: 0.1
             padding: 5  # Add some padding around the status items
             spacing: 5  # Add some space between status items
-        
+<OutroScreen>:
+    CustomCarousel:
+        id: intro_carousel
+        direction: 'right'
+        Image:
+            source: 'Slide1.jpg'
+            allow_stretch: True
+            keep_ratio: True
+            #Damit das Bild dem Smartphone angepasst wird(ChatGPT)
+        Image:
+            source: 'fest.png'
+            allow_stretch: True
+            keep_ratio: True
+        Image:
+            source: 'Slide3.jpg'
+            allow_stretch: True
+            keep_ratio: True
+        Image:
+            source: 'galaxie.mp4'
+            allow_stretch: True
+            keep_ratio: True
