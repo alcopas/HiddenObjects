@@ -128,7 +128,6 @@ class OptionsScreen(Screen):
         else:
             soundfx_button.text = 'Sound Effects: Off'
 
-
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -143,21 +142,55 @@ class IntroScreen(Screen):
             app.game_state.music.play()
 
 class LevelSelecterScreen(Screen):
+    rectangle_colors = ListProperty([]) 
     def back_button_press(self):
         app = App.get_running_app()
         app.root.current = 'menu'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.update_rectangle_colors() 
+
+    def on_enter(self):
+        self.update_rectangle_colors()
+
+    def update_rectangle_colors(self):
+        app = App.get_running_app()
+        rectangle_colors = []
+        for level in range(len(app.game_state.hidden_objects)):
+            if any(obj["found"] for obj in app.game_state.hidden_objects[level]):
+                rectangle_colors.append([1, 0, 0, 0.2])  # Red color for incomplete levels
+            else:
+                rectangle_colors.append([0, 1, 0, 0.4])  # Green color for complete levels
+        self.rectangle_colors = rectangle_colors  # Update the property
       
     def select_level_press(self, selected_level):        
         app = App.get_running_app()        
         app.game_state.game_level = int(selected_level)
         app.root.current = 'game'
-        #self.select_level_press = [
-            #["position":, "size":, "name":, "level_teich" ??????]
-        #]
     
+    def on_house_click(self, instance, touch):
+    # Get the touch coordinates
+        touch_x, touch_y = touch.pos
+
+        # Define the coordinates and sizes of clickable areas
+        area1_x, area1_y, area1_width, area1_height = 100, 200, 150, 150
+        area2_x, area2_y, area2_width, area2_height = 300, 300, 100, 100
+
+        app = App.get_running_app()
+
+        # Check if the touch coordinates are within the first area
+        if area1_x <= touch_x <= area1_x + area1_width and area1_y <= touch_y <= area1_y + area1_height:
+            app.game_state.game_level = 0  # Set to the appropriate level
+            app.root.current = 'game'
+
+        # Check if the touch coordinates are within the second area
+        if area2_x <= touch_x <= area2_x + area2_width and area2_y <= touch_y <= area2_y + area2_height:
+            app.game_state.game_level = 1  # Set to the appropriate level
+            app.root.current = 'game'
+
+        
+        
 class CustomCarousel(Carousel):
 
     def on_touch_move(self, touch):

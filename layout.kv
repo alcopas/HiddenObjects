@@ -78,17 +78,27 @@
 <LevelSelecterScreen>:
     BoxLayout:
         orientation: 'vertical'
-        id: level_selector_boxlayout
-        Label:
-            text: 'Wähle ein Level aus'
-        Slider:
-            id: level_selector
-            min: 0
-            max: 2
-            value: 0
-        Button:
-            text: 'Auswahl bestätigen'
-            on_press: root.select_level_press(level_selector.value)   
+        Image:
+            source: 'haus_level.png'  # Replace with your house image
+            allow_stretch: True
+            keep_ratio: False  # Adjust as needed
+            on_touch_down: root.on_house_click(*args)  # Call a function when the house is clicked
+
+            canvas:
+                # Define clickable areas as rectangles
+                # Adjust coordinates relative to the Image widget's position and size
+                Color:
+                    rgba: root.rectangle_colors[0] if len(root.rectangle_colors) > 0 else (1, 1, 1, 1)
+                Rectangle:
+                    pos: self.pos[0] + 100, self.pos[1] + 200  # Adjust position
+                    size: 150, 150  # Adjust size
+
+                Color:
+                    rgba: root.rectangle_colors[1] if len(root.rectangle_colors) > 0 else (1, 1, 1, 1)
+                Rectangle:
+                    pos: self.pos[0] + 300, self.pos[1] + 300
+                    size: 100, 100
+
     AnchorLayout:  #ChatGPT
         anchor_x: 'right'
         anchor_y: 'top'
