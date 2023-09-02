@@ -5,18 +5,22 @@
         id: intro_carousel
         direction: 'right'
         Image:
-            source: 'Verabschiedung.jpg'
+            source: 'Verabschiedung_text_.png'
+            allow_stretch: True
+            keep_ratio: True
+            #Damit das Bild dem Smartphone angepasst wird(ChatGPT)
+        Image:
+            source: 'neues_Haus_text_.png'
             allow_stretch: True
             keep_ratio: True
         Image:
-            source: 'Slide2.jpg'
+            source: 'im_haus_text_.png'
+            allow_stretch: True
+            keep_ratio: True
         Image:
-            source: 'Slide3.jpg'
-
-
-
-<OptionsScreen>:
-
+            source: 'die_Reise_beginnt_text_.png'
+            allow_stretch: True
+            keep_ratio: True
 
 <MainMenuScreen>:
     BoxLayout:
@@ -24,19 +28,47 @@
         Label:
             text: 'Welcome to Hidden Object Game'
         Button:
-            text: 'New Game'
-            on_press: app.root.current = 'game'
+            text: 'Neues Spiel'
+            background_color: 0.494, 1, 0.973, 1 
+            on_press: app.root.current = 'levels' 
+        Button:
+            text: 'Spiel fortsetzen'
+            background_color: 0.494, 1, 0.973, 1 
+            on_press: app.game_state.load_hidden_objects()
         Button:
             text: 'Exit'
+            background_color: 0.494, 1, 0.973, 1 
             on_press: app.stop()
-        Button:
-            text: 'Options'
-            on_press: app.root.current = 'options'
 
+<LevelSelecterScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        id: level_selector_boxlayout
+        Label:
+            text: 'Wähle ein Level aus'
+        Slider:
+            id: level_selector
+            min: 0
+            max: 2
+            value: 0
+        Button:
+            text: 'Auswahl bestätigen'
+            on_press: root.select_level_press(level_selector.value)   
+    AnchorLayout:  #ChatGPT
+        anchor_x: 'right'
+        anchor_y: 'top'
+        Button:
+            text: 'Zurück'
+            size_hint: None, None
+            size: 100, 50
+            pos_hint: {'top': 1, 'right': 1}
+            on_press: root.back_button_press()
+    
+            
 <GameScreen>:
+    id: game_screen    
     BoxLayout:
         orientation: 'horizontal'
-
         # Game area (90% of width)
         HiddenObjectGame:
             size_hint_x: 0.9
@@ -49,6 +81,7 @@
                     size: self.size
                 StencilUse
 
+
             canvas.after:
                 StencilUnUse
                 Rectangle:
@@ -59,78 +92,28 @@
         # Status area (10% of width)
         BoxLayout:
             orientation: 'vertical'
+            id: status_area
             size_hint_x: 0.1
-            padding: 10  # Add some padding around the status items
-            spacing: 10  # Add some space between status items
-
-            Label:
-                text: "Items to find:"
-                font_size: '20sp'
-
-            BoxLayout:
-                id: item1
-                Image:
-                    source: "umbrella.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Umbrella')
-                    readonly: True
-
-            BoxLayout:
-                id: item2
-                Image:
-                    source: "shoe.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Shoe')
-                    readonly: True
-
-            BoxLayout:
-                id: item3
-                Image:
-                    source: "umbrella.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Umbrella')
-                    readonly: True
-
-            BoxLayout:
-                id: item4
-                Image:
-                    source: "shoe.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Shoe')
-                    readonly: True
-
-            BoxLayout:
-                id: item5
-                Image:
-                    source: "umbrella.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Umbrella')
-                    readonly: True
-
-            BoxLayout:
-                id: item6
-                Image:
-                    source: "shoe.png"
-                    size_hint: (None, None)
-                    size: (100, 100)  # or any other size you want for the icons
-                    keep_ratio: True
-                CheckBox:
-                    active: root.ids.game_area.is_item_found('Shoe')
-                    readonly: True
-
-            # ... add more items as needed
+            padding: 5  # Add some padding around the status items
+            spacing: 5  # Add some space between status items
+<OutroScreen>:
+    CustomCarousel:
+        id: intro_carousel
+        direction: 'right'
+        Image:
+            source: 'Slide1.jpg'
+            allow_stretch: True
+            keep_ratio: True
+            #Damit das Bild dem Smartphone angepasst wird(ChatGPT)
+        Image:
+            source: 'fest.png'
+            allow_stretch: True
+            keep_ratio: True
+        Image:
+            source: 'Slide3.jpg'
+            allow_stretch: True
+            keep_ratio: True
+        Image:
+            source: 'galaxie.mp4'
+            allow_stretch: True
+            keep_ratio: True
