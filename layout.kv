@@ -30,11 +30,13 @@
         Button:
             text: 'Neues Spiel'
             background_color: 0.494, 1, 0.973, 1 
-            on_press: app.root.current = 'levels' 
+            on_press: root.start_new_game()
         Button:
-            text: 'Spiel fortsetzen'
-            background_color: 0.494, 1, 0.973, 1 
-            on_press: app.game_state.load_hidden_objects()
+            id: continue_button
+            text: 'Spiel fortsetzen' if not root.is_all_found() else 'Game Over'
+            background_color: (0.494, 1, 0.973, 1) if not root.is_all_found() else (.5, .5, .5, 1)
+            on_press: app.root.current = 'levels'
+            disabled: root.is_all_found()
         Button:
             text: 'Exit'
             background_color: 0.494, 1, 0.973, 1 
@@ -114,6 +116,6 @@
             allow_stretch: True
             keep_ratio: True
         Image:
-            source: 'galaxie.mp4'
+            source: 'galaxie.gif'
             allow_stretch: True
             keep_ratio: True

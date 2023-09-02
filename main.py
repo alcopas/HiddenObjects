@@ -25,11 +25,38 @@ from kivy.uix.screenmanager import SlideTransition
 DEBUG = False
 
 class MainMenuScreen(Screen):
+    def on_enter(self):
+        app = App.get_running_app()
+        app.game_state.load_hidden_objects()
+        # Update the button properties here based on the current game state
+        button = self.ids['continue_button']
+        if self.is_all_found():
+            button.text = 'Game Over'
+            button.background_color = (0.5, 0.5, 0.5, 1)
+            button.disabled = True
+        else:
+            button.text = 'Spiel fortsetzen'
+            button.background_color = (0.494, 1, 0.973, 1)
+            button.disabled = False
 
+    def is_all_found(self):
+        app = App.get_running_app()
+        for level in app.game_state.hidden_objects:
+            if not all(obj["found"] for obj in level):
+                return False
+        return True
+    
     def on_leave(self):
         app = App.get_running_app()
         if app.game_state.music:
             app.game_state.music.stop()
+    def start_new_game(self):
+        app = App.get_running_app()
+        app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
+        for level in app.game_state.hidden_objects:
+            for item in level:
+                item["found"] = False
+        app.root.current = 'levels'  # Gehe zur Levelauswahl zurück   ChatGPT
 
 class GameScreen(Screen): 
     def on_enter(self):        
@@ -73,6 +100,10 @@ class IntroScreen(Screen):
     def on_enter(self):
         app = App.get_running_app()
         if app.game_state.music:
+            app.game_state.music.stop()  # Stop any currently playing music
+            app.game_state.music.unload()  # Unload the current music file
+        app.game_state.music = SoundLoader.load('intro_music.piano.mp3')  # Load the intro music
+        if app.game_state.music:
             app.game_state.music.play()
 
 class LevelSelecterScreen(Screen):
@@ -82,7 +113,7 @@ class LevelSelecterScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
+      
     def select_level_press(self, selected_level):        
         app = App.get_running_app()        
         app.game_state.game_level = int(selected_level)
@@ -305,8 +336,6 @@ class GameState(EventDispatcher):
         try:
             with open('hidden_objects.pkl', 'rb') as file:
                 self.hidden_objects = pickle.load(file)
-            app = App.get_running_app() 
-            app.root.current = 'levels' 
         except FileNotFoundError:
             pass  # Handle missing file if needed #ChatGPT
 
@@ -316,7 +345,11 @@ class OutroScreen(Screen):
     def on_enter(self):
         app = App.get_running_app()
         if app.game_state.music:
-            app.game_state.music.play()
+            app.game_state.music.stop()  # Stop any currently playing music
+            app.game_state.music.unload()  # Unload the current music file
+        app.game_state.music = SoundLoader.load('piano_outro.mp3')  # Load the outro music
+        if app.game_state.music:
+            app.game_state.music.play()   #ChatGPT
 
 class HiddenObjectApp(App):
     game_state = None
