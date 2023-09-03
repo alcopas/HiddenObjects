@@ -212,7 +212,6 @@ class CustomCarousel(Carousel):
         return super(CustomCarousel, self).on_touch_move(touch)
 
 class BoundedScatter(Scatter):
-
     def on_transform(self, *args):
         if not self.parent:
             return super().on_transform(*args)
@@ -226,7 +225,7 @@ class BoundedScatter(Scatter):
         return super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    source_image = StringProperty('image.jpg')  #should this change to .png ?
+    source_image = StringProperty('image.jpg')  # Use the image format you have, either .jpg or .png
     app = None
 
     def __init__(self, **kwargs):
@@ -234,9 +233,10 @@ class HiddenObjectGame(Widget):
         self.app = App.get_running_app() 
         self.app.game_state.bind(source_image=self.update_image_source)
 
-        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale_min=1)
+        # Set scale to 1.5 for initial zoom-in
+        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale=1.5, scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
-        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3') #I added a correct sound B)
+        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3')  # Great! You added a sound effect!
 
         # Ensure scatter size is set to the image's size
         self.scatter.size = self.image.size
@@ -244,10 +244,9 @@ class HiddenObjectGame(Widget):
         self.scatter.add_widget(self.image)
         self.add_widget(self.scatter)
 
-
-
     def update_image_source(self, instance, value):
         self.image.source = value
+
 
     def flash_screen(self, color=(1, 0, 0, 1)):  # Default color is red
         flash = Widget(size=Window.size, pos=(0, 0))
