@@ -74,7 +74,7 @@ class GameScreen(Screen):
             app.game_state.music.stop()
         prefix = app.game_state.get_prefix()
         app.game_state.set_source_image()        
-        our_size = (100, 100)
+        our_size = (150, 150)
 
         status_area.clear_widgets()
 
@@ -234,7 +234,7 @@ class HiddenObjectGame(Widget):
         self.app.game_state.bind(source_image=self.update_image_source)
 
         # Set scale to 1.5 for initial zoom-in
-        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale=1.5, scale_min=1)
+        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale=1.3, scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.sound_effect_1 = SoundLoader.load('correct_sound.mp3')  # Great! You added a sound effect!
 
