@@ -3,7 +3,7 @@
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: 'Options'
+            text: 'Optionen'
             font_size: '24sp'
 
         # Music toggle button
@@ -15,7 +15,7 @@
         # Sound effects toggle button
         ToggleButton:
             id: soundfx_button
-            text: 'Sound-Effects: On' if app.game_state.soundfx_enabled else 'Sound-Effekte: Off'
+            text: 'Sound-Effekte: On' if app.game_state.soundfx_enabled else 'Sound-Effekte: Off'
             on_release: root.toggle_soundfx()
 
         Button:
@@ -99,7 +99,7 @@
         Button:
             text: 'Zurück'
             size_hint: None, None
-            size: 100, 50
+            size: 150,75
             pos_hint: {'top': 1, 'right': 1}
             on_press: root.back_button_press()
     

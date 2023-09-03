@@ -80,7 +80,7 @@ class GameScreen(Screen):
         status_area.clear_widgets()
 
         # Adding the back button directly to the status_area
-        bb = Button(text="Zurück", size_hint_y=None, height=50)
+        bb = Button(text="Zurück", size_hint_y=None, height=100)
         bb.on_press = self.bb_press
         status_area.add_widget(bb)
 
