@@ -21,6 +21,8 @@ from kivy.uix.carousel import Carousel
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import NoTransition
 from kivy.uix.screenmanager import SlideTransition
+from kivy.uix.scrollview import ScrollView
+
 
 DEBUG = False
 
@@ -72,26 +74,35 @@ class GameScreen(Screen):
             app.game_state.music.stop()
         prefix = app.game_state.get_prefix()
         app.game_state.set_source_image()        
-        our_size = (100, 100) if len(app.game_state.hidden_objects[app.game_state.game_level]) < 6 else (50,50)
-        # TODO: make this math better
+        our_size = (100, 100)
+
         status_area.clear_widgets()
-        bl = BoxLayout()
-        bb = Button()
-        bb.text = "Zurück"
+
+        # Adding the back button directly to the status_area
+        bb = Button(text="Zurück", size_hint_y=None, height=50)
         bb.on_press = self.bb_press
-        self.sound_effect_2 = SoundLoader.load('click_sound.mp3')
-        bl.add_widget(bb)
-        status_area.add_widget(bl) 
+        status_area.add_widget(bb)
+
+        # Create ScrollView and VBox for scrollable content
+        scroll_view = ScrollView(do_scroll_x=False, size_hint_y=0.85) # Make it occupy the rest of the status_area height
+        vbox = BoxLayout(orientation='vertical', size_hint_y=None)
+        vbox.bind(minimum_height=vbox.setter('height'))  # Adjust height dynamically
+
         last_added = -1
         for item in app.game_state.hidden_objects[app.game_state.game_level]:
             if item["id"] > last_added:
-                bl = BoxLayout()
+                bl = BoxLayout(size_hint_y=None, height=our_size[1])
                 last_added = item["id"]
                 img_filename = f'{prefix}{item["name"]}.png' if not item["found"] else f'{prefix}{item["name"]}_gs.png'
                 img = Image(source=img_filename, size=our_size, size_hint=(None,None), keep_ratio=True)
                 app.game_state.widget_refs[f"img_{item['name']}"] = img 
                 bl.add_widget(img)                
-                status_area.add_widget(bl)    
+                vbox.add_widget(bl)   
+
+        # Add vbox to scroll_view and add scroll_view to status_area
+        scroll_view.add_widget(vbox)
+        status_area.add_widget(scroll_view)
+
         hog.check_all_found()
 
     def bb_press(self):
@@ -414,11 +425,20 @@ class GameState(EventDispatcher):
         try:
             with open('hidden_objects.pkl', 'rb') as file:
                 loaded_data = pickle.load(file)
-                self.hidden_objects = loaded_data.get("hidden_objects", [])
-                self.soundfx_enabled = loaded_data.get("soundfx_enabled", True)
-                self.music_enabled = loaded_data.get("music_enabled", True)
-        except FileNotFoundError:
-            pass  # Handle missing file if needed
+                if isinstance(loaded_data, dict):  # Checking if loaded data is a dictionary
+                    self.hidden_objects = loaded_data.get("hidden_objects", [])
+                    self.soundfx_enabled = loaded_data.get("soundfx_enabled", True)
+                    self.music_enabled = loaded_data.get("music_enabled", True)
+                else:
+                    # You can add logging here to inform about an old save format
+                    pass
+        except (FileNotFoundError, pickle.UnpicklingError, AttributeError, EOFError):
+            # Handle multiple exceptions: 
+            # - FileNotFoundError for missing file
+            # - UnpicklingError for issues during unpickling
+            # - AttributeError for missing attributes in loaded data
+            # - EOFError for an unexpectedly empty file
+            pass
 
 class OutroScreen(Screen):
     def __init__(self, **kwargs):
@@ -451,5 +471,7 @@ class HiddenObjectApp(App):
 
         return sm
     
+   
 if __name__ == "__main__":
     HiddenObjectApp().run()
+
