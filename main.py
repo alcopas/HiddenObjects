@@ -133,17 +133,17 @@ class OptionsScreen(Screen):
         app = App.get_running_app()
         music_button = self.ids['music_button']
         if app.game_state.music_enabled:
-            music_button.text = 'Music: On'
+            music_button.text = 'Musik: On'
         else:
-            music_button.text = 'Music: Off'
+            music_button.text = 'Musik: Off'
 
     def update_soundfx_button_text(self):
         app = App.get_running_app()
         soundfx_button = self.ids['soundfx_button']
         if app.game_state.soundfx_enabled:
-            soundfx_button.text = 'Sound Effects: On'
+            soundfx_button.text = 'Sound-Effekte: On'
         else:
-            soundfx_button.text = 'Sound Effects: Off'
+            soundfx_button.text = 'Sound-Effekte: Off'
 
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
@@ -178,7 +178,7 @@ class LevelSelecterScreen(Screen):
             if any(obj["found"] for obj in app.game_state.hidden_objects[level]):
                 rectangle_colors.append([1, 0, 0, 0.2])  # Red color for complete levels
             else:
-                rectangle_colors.append([0, 1, 0, 0.4])  # Green color for incomplete levels
+                rectangle_colors.append([1, 1, 1, 0.4])  # grau für unkomplete Levels
         self.rectangle_colors = rectangle_colors  # Update the property
       
     def select_level_press(self, selected_level):        
@@ -187,23 +187,27 @@ class LevelSelecterScreen(Screen):
         app.root.current = 'game'
     
     def on_house_click(self, instance, touch):
-    # Get the touch coordinates
+        # Get the touch coordinates
         touch_x, touch_y = touch.pos
 
         # Define the coordinates and sizes of clickable areas
-        area1_x, area1_y, area1_width, area1_height = 100, 200, 150, 150
-        area2_x, area2_y, area2_width, area2_height = 300, 300, 100, 100
+        area1_x, area1_y, area1_width, area1_height = 1041, 0, 293, 231 #Teich, Level 0
+        area2_x, area2_y, area2_width, area2_height = 63, 368, 200, 472 #Zimmer, Level 1
+        area3_x, area3_y, area3_width, area3_height = 853, 0, 129, 290 #Garten, Level 2
 
         app = App.get_running_app()
 
         # Check if the touch coordinates are within the first area
         if area1_x <= touch_x <= area1_x + area1_width and area1_y <= touch_y <= area1_y + area1_height:
-            app.game_state.game_level = 0  # Set to the appropriate level
+            app.game_state.game_level = 0 
             app.root.current = 'game'
 
-        # Check if the touch coordinates are within the second area
         if area2_x <= touch_x <= area2_x + area2_width and area2_y <= touch_y <= area2_y + area2_height:
-            app.game_state.game_level = 1  # Set to the appropriate level
+            app.game_state.game_level = 1 
+            app.root.current = 'game'
+
+        if area3_x <= touch_x <= area3_x + area3_width and area3_y <= touch_y <= area3_y + area3_height:
+            app.game_state.game_level = 2 
             app.root.current = 'game'
         
 class CustomCarousel(Carousel):
