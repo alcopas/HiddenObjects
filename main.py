@@ -169,7 +169,8 @@ class LevelSelecterScreen(Screen):
         app = App.get_running_app()
         rectangle_colors = []
         for level in range(len(app.game_state.hidden_objects)):
-            if any(obj["found"] for obj in app.game_state.hidden_objects[level]):
+            # test is all items are found
+            if all(obj["found"] for obj in app.game_state.hidden_objects[level]): #this should only be true if all items are found
                 rectangle_colors.append([1, 0, 0, 0.2])  # Red color for incomplete levels
             else:
                 rectangle_colors.append([0, 1, 0, 0.4])  # Green color for complete levels
