@@ -30,8 +30,8 @@ class MainMenuScreen(Screen):
     def on_enter(self):
         app = App.get_running_app()
         app.game_state.load_hidden_objects()
-        if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
-            app.game_state.music.play()
+        #if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
+            #app.game_state.music.play()
           
         # Update the button properties here based on the current game state
         button = self.ids['continue_button']
@@ -58,6 +58,7 @@ class MainMenuScreen(Screen):
     def start_new_game(self):
         app = App.get_running_app()
         app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
+        #app.game_state.set_level_music(app.game_state.level_music_tracks[0])
         for level in app.game_state.hidden_objects:
             for item in level:
                 item["found"] = False
@@ -79,7 +80,7 @@ class GameScreen(Screen):
         status_area.clear_widgets()
 
         # Adding the back button directly to the status_area
-        bb = Button(text="Zurück", size_hint_y=None, height=50)
+        bb = Button(text="Zurück", size_hint_y=None, height=100)
         bb.on_press = self.bb_press
         status_area.add_widget(bb)
 
@@ -109,6 +110,11 @@ class GameScreen(Screen):
         app = App.get_running_app()
         app.root.current = 'levels'
 
+    def on_leave(self):
+        app = App.get_running_app()
+        if app.game_state.music:
+            app.game_state.music.stop()
+
 class OptionsScreen(Screen):
     def toggle_music(self):
         app = App.get_running_app()
@@ -127,17 +133,17 @@ class OptionsScreen(Screen):
         app = App.get_running_app()
         music_button = self.ids['music_button']
         if app.game_state.music_enabled:
-            music_button.text = 'Music: On'
+            music_button.text = 'Musik: On'
         else:
-            music_button.text = 'Music: Off'
+            music_button.text = 'Musik: Off'
 
     def update_soundfx_button_text(self):
         app = App.get_running_app()
         soundfx_button = self.ids['soundfx_button']
         if app.game_state.soundfx_enabled:
-            soundfx_button.text = 'Sound Effects: On'
+            soundfx_button.text = 'Sound-Effekte: On'
         else:
-            soundfx_button.text = 'Sound Effects: Off'
+            soundfx_button.text = 'Sound-Effekte: Off'
 
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
@@ -173,7 +179,7 @@ class LevelSelecterScreen(Screen):
             if all(obj["found"] for obj in app.game_state.hidden_objects[level]): #this should only be true if all items are found
                 rectangle_colors.append([1, 0, 0, 0.2])  # Red color for incomplete levels
             else:
-                rectangle_colors.append([0, 1, 0, 0.4])  # Green color for complete levels
+                rectangle_colors.append([1, 1, 1, 0.4])  # grau für unkomplete Levels
         self.rectangle_colors = rectangle_colors  # Update the property
       
     def select_level_press(self, selected_level):        
@@ -182,26 +188,28 @@ class LevelSelecterScreen(Screen):
         app.root.current = 'game'
     
     def on_house_click(self, instance, touch):
-    # Get the touch coordinates
+        # Get the touch coordinates
         touch_x, touch_y = touch.pos
 
         # Define the coordinates and sizes of clickable areas
-        area1_x, area1_y, area1_width, area1_height = 100, 200, 150, 150
-        area2_x, area2_y, area2_width, area2_height = 300, 300, 100, 100
+        area1_x, area1_y, area1_width, area1_height = 1041, 0, 293, 231 #Teich, Level 0
+        area2_x, area2_y, area2_width, area2_height = 63, 368, 200, 472 #Zimmer, Level 1
+        area3_x, area3_y, area3_width, area3_height = 853, 0, 129, 290 #Garten, Level 2
 
         app = App.get_running_app()
 
         # Check if the touch coordinates are within the first area
         if area1_x <= touch_x <= area1_x + area1_width and area1_y <= touch_y <= area1_y + area1_height:
-            app.game_state.game_level = 0  # Set to the appropriate level
+            app.game_state.game_level = 0 
             app.root.current = 'game'
 
-        # Check if the touch coordinates are within the second area
         if area2_x <= touch_x <= area2_x + area2_width and area2_y <= touch_y <= area2_y + area2_height:
-            app.game_state.game_level = 1  # Set to the appropriate level
+            app.game_state.game_level = 1 
             app.root.current = 'game'
 
-        
+        if area3_x <= touch_x <= area3_x + area3_width and area3_y <= touch_y <= area3_y + area3_height:
+            app.game_state.game_level = 2 
+            app.root.current = 'game'
         
 class CustomCarousel(Carousel):
 
@@ -248,24 +256,6 @@ class HiddenObjectGame(Widget):
     def update_image_source(self, instance, value):
         self.image.source = value
 
-
-    def flash_screen(self, color=(1, 0, 0, 1)):  # Default color is red
-        flash = Widget(size=Window.size, pos=(0, 0))
-        
-        with flash.canvas:
-            Color(*color)
-            self.flash_rect = Rectangle(size=flash.size, pos=flash.pos)
-
-        self.add_widget(flash)
-
-        anim = Animation(opacity=0, duration=0.3)  # Flash for 0.3 seconds
-
-        def remove_flash(*args):
-            self.remove_widget(flash)
-
-        anim.bind(on_complete=remove_flash)
-        anim.start(flash)
-    
     def is_item_found(self, item_name):
         for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
             if obj["name"] == item_name and obj["found"]:
@@ -344,6 +334,12 @@ class GameState(EventDispatcher):
     soundfx_enabled = True
     music_enabled = True
 
+    level_music_tracks = [
+        'teich.mp3',  # Music for level 0
+        'level2_music.mp3',  # Music for level 1
+        'level3_music.mp3',  # Music for level 2
+    ]
+
     def __init__(self, **kwargs):
         
         self.sound_effect_2 = SoundLoader.load('click_sound.mp3')
@@ -404,12 +400,29 @@ class GameState(EventDispatcher):
         return prefix
     
     def set_source_image(self):
-        if self.game_level == 0:
-            self.source_image = "./images/teich/teich.png"
-        elif self.game_level == 1:
-            self.source_image = "./images/zimmer/zimmer.png"
-        elif self.game_level == 2:
-            self.source_image = "./images/garten/garten.png"
+        if self.game_level >= 0 and self.game_level < len(self.level_music_tracks):
+            if self.game_level == 0:
+                self.source_image = "./images/teich/teich.png"
+            elif self.game_level == 1:
+                self.source_image = "./images/zimmer/zimmer.png"
+            elif self.game_level == 2:
+                self.source_image = "./images/garten/garten.png"
+
+            music_track = self.level_music_tracks[self.game_level]
+            self.set_level_music(music_track)
+        #else:
+            #self.source_image = 'image.jpg' ChatGPT hat forgeschlagen, braucht man das???
+    
+    def set_level_music(self, music_track):
+        # Stop any currently playing music
+        if self.music:
+            self.music.stop()
+            self.music.unload()
+       
+       # Load and play the music for the current level
+        self.music = SoundLoader.load(music_track)
+        if self.music and self.music_enabled:
+            self.music.play()
 
     def save_hidden_objects(self):
         data_to_save = {
