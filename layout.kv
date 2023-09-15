@@ -73,30 +73,11 @@
     BoxLayout:
         orientation: 'vertical'
         Image:
-            source: 'haus_level.png' 
+            source: 'haus_levels.png' 
             allow_stretch: True
             keep_ratio: False 
             on_touch_down: root.on_house_click(*args) 
 
-            canvas:
-                
-                Color:
-                    rgba: root.rectangle_colors[0] if len(root.rectangle_colors) > 0 else (1, 1, 1, 1)
-                Rectangle:
-                    pos: self.pos[0] + 1041, self.pos[1] + 0  # Adjust position
-                    size: 293, 231  # Teich
-
-                Color:
-                    rgba: root.rectangle_colors[1] if len(root.rectangle_colors) > 0 else (1, 1, 1, 1)
-                Rectangle:
-                    pos: self.pos[0] + 63, self.pos[1] + 368
-                    size: 200, 472  # Zimmer
-
-                Color:
-                    rgba: root.rectangle_colors[1] if len(root.rectangle_colors) > 0 else (1, 1, 1, 1)
-                Rectangle:
-                    pos: self.pos[0] + 853, self.pos[1] + 0
-                    size: 129, 290  #Garten
 
     AnchorLayout:  #ChatGPT, damit der Knopf rechts im Ecken ist
         anchor_x: 'right'

@@ -160,57 +160,53 @@ class IntroScreen(Screen):
             app.game_state.music.play()
 
 class LevelSelecterScreen(Screen):
-    rectangle_colors = ListProperty([]) 
     def back_button_press(self):
         app = App.get_running_app()
         app.root.current = 'menu'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.update_rectangle_colors() 
-
-    def on_enter(self):
-        self.update_rectangle_colors()
-
-    def update_rectangle_colors(self):
-        app = App.get_running_app()
-        rectangle_colors = []
-        for level in range(len(app.game_state.hidden_objects)):
-            # test is all items are found
-            if all(obj["found"] for obj in app.game_state.hidden_objects[level]): #this should only be true if all items are found
-                rectangle_colors.append([1, 0, 0, 0.2])  # Red color for incomplete levels
-            else:
-                rectangle_colors.append([1, 1, 1, 0.4])  # grau für unkomplete Levels
-        self.rectangle_colors = rectangle_colors  # Update the property
+        self.create_click_areas()
       
-    def select_level_press(self, selected_level):        
-        app = App.get_running_app()        
-        app.game_state.game_level = int(selected_level)
+    def create_click_areas(self):
+        # Define clickable areas and their associated actions
+        self.click_areas = [
+            {
+                "position": (1041, 0),
+                "size": (293, 231),
+                "level": 0,
+                "action": self.select_level,
+            },
+            {
+                "position": (63, 368),
+                "size": (200, 472),
+                "level": 1,
+                "action": self.select_level,
+            },
+            {
+                "position": (853, 0),
+                "size": (129, 290),
+                "level": 2,
+                "action": self.select_level,
+            },
+            
+        ]
+
+    def select_level(self, level):
+        app = App.get_running_app()
+        app.game_state.game_level = level
         app.root.current = 'game'
-    
+
     def on_house_click(self, instance, touch):
         # Get the touch coordinates
         touch_x, touch_y = touch.pos
 
-        # Define the coordinates and sizes of clickable areas
-        area1_x, area1_y, area1_width, area1_height = 1041, 0, 293, 231 #Teich, Level 0
-        area2_x, area2_y, area2_width, area2_height = 63, 368, 200, 472 #Zimmer, Level 1
-        area3_x, area3_y, area3_width, area3_height = 853, 0, 129, 290 #Garten, Level 2
-
-        app = App.get_running_app()
-
-        # Check if the touch coordinates are within the first area
-        if area1_x <= touch_x <= area1_x + area1_width and area1_y <= touch_y <= area1_y + area1_height:
-            app.game_state.game_level = 0 
-            app.root.current = 'game'
-
-        if area2_x <= touch_x <= area2_x + area2_width and area2_y <= touch_y <= area2_y + area2_height:
-            app.game_state.game_level = 1 
-            app.root.current = 'game'
-
-        if area3_x <= touch_x <= area3_x + area3_width and area3_y <= touch_y <= area3_y + area3_height:
-            app.game_state.game_level = 2 
-            app.root.current = 'game'
+        # Check if the touch coordinates are within any clickable area
+        for area in self.click_areas:
+            x, y, width, height = area["position"] + area["size"]
+            if x <= touch_x <= x + width and y <= touch_y <= y + height:
+                area["action"](area["level"])
+                break
         
 class CustomCarousel(Carousel):
 
