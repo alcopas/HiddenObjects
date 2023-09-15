@@ -244,7 +244,7 @@ class HiddenObjectGame(Widget):
         # Set scale to 1.5 for initial zoom-in
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale=1.3, scale_min=1)
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
-        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3')  # Great! You added a sound effect!
+        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3') 
 
         # Ensure scatter size is set to the image's size
         self.scatter.size = self.image.size
@@ -334,9 +334,10 @@ class GameState(EventDispatcher):
     music_enabled = True
 
     level_music_tracks = [
-        'teich.mp3',  # Music for level 0
-        'level2_music.mp3',  # Music for level 1
-        'level3_music.mp3',  # Music for level 2
+        'teich.mp3',  # Musik für Level 0
+        'zimmer.mp3',  # Musik für Level 1
+        'garten.mp3',  # Musik für Level 2
+        'wald.mp3', # Musik für Level 3
     ]
 
     def __init__(self, **kwargs):
@@ -412,7 +413,7 @@ class GameState(EventDispatcher):
         #else:
             #self.source_image = 'image.jpg' ChatGPT hat forgeschlagen, braucht man das???
     
-    def set_level_music(self, music_track):
+    def set_level_music(self, music_track):  #ChatGPT
         # Stop any currently playing music
         if self.music:
             self.music.stop()
@@ -422,6 +423,7 @@ class GameState(EventDispatcher):
         self.music = SoundLoader.load(music_track)
         if self.music and self.music_enabled:
             self.music.play()
+            self.music.loop = True
 
     def save_hidden_objects(self):
         data_to_save = {
@@ -458,9 +460,9 @@ class OutroScreen(Screen):
     def on_enter(self):
         app = App.get_running_app()
         if app.game_state.music:
-            app.game_state.music.stop()  # Stop any currently playing music
-            app.game_state.music.unload()  # Unload the current music file
-        app.game_state.music = SoundLoader.load('piano_outro.mp3')  # Load the outro music
+            app.game_state.music.stop() 
+            app.game_state.music.unload() 
+        app.game_state.music = SoundLoader.load('piano_outro.mp3') 
         if app.game_state.music:
             if app.game_state.music_enabled: app.game_state.music.play()   #ChatGPT
 
