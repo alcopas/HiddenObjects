@@ -3,16 +3,12 @@ from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.animation import Animation
-from kivy.graphics import Color, Rectangle
 from kivy.properties import (
-    NumericProperty, ReferenceListProperty, ObjectProperty, ListProperty, StringProperty
+    ListProperty, StringProperty
 )
 from kivy.event import EventDispatcher
 from kivy.uix.scatter import Scatter
-from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
-from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
@@ -67,6 +63,11 @@ class MainMenuScreen(Screen):
 class GameScreen(Screen): 
     def on_enter(self):        
         hog = self.ids['game_area']
+        # set the scale_min of the scatter to make sure the image is scaled to the game_area
+        our_scale_min=max(self.width / 1600, self.height / 1200)
+        hog.scatter.scale_min = our_scale_min
+        hog.scatter.scale = our_scale_min
+
         status_area = self.ids['status_area']
         app = App.get_running_app()
         if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
@@ -175,8 +176,9 @@ class LevelSelecterScreen(Screen):
         app = App.get_running_app()
         rectangle_colors = []
         for level in range(len(app.game_state.hidden_objects)):
-            if any(obj["found"] for obj in app.game_state.hidden_objects[level]):
-                rectangle_colors.append([1, 0, 0, 0.2])  # Red color for complete levels
+            # test is all items are found
+            if all(obj["found"] for obj in app.game_state.hidden_objects[level]): #this should only be true if all items are found
+                rectangle_colors.append([1, 0, 0, 0.2])  # Red color for incomplete levels
             else:
                 rectangle_colors.append([1, 1, 1, 0.4])  # grau für unkomplete Levels
         self.rectangle_colors = rectangle_colors  # Update the property
@@ -240,9 +242,8 @@ class HiddenObjectGame(Widget):
         super().__init__(**kwargs)
         self.app = App.get_running_app() 
         self.app.game_state.bind(source_image=self.update_image_source)
-
-        # Set scale to 1.5 for initial zoom-in
-        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None), scale=1.3, scale_min=1)
+        self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None))
+        
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.sound_effect_1 = SoundLoader.load('correct_sound.mp3') 
 
