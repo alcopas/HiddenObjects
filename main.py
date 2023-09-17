@@ -189,6 +189,12 @@ class LevelSelecterScreen(Screen):
                 "level": 2,
                 "action": self.select_level,
             },
+            {
+                "position": (990, 252),
+                "size": (334, 262),
+                "level": 3,
+                "action": self.select_level,
+            },
             
         ]
 
@@ -384,6 +390,15 @@ class GameState(EventDispatcher):
                 {"position": (826, 153), "size": (52, 31), "name":"kamm", "id":7, "found":False},
                 {"position": (508, 968), "size": (65, 57), "name":"waschbaer", "id":8, "found":False},
                 {"position": (617, 938), "size": (45, 42), "name":"brot", "id":9, "found":False}
+            ],
+            [
+                {"position": (74, 233), "size": (86, 73), "name":"mueze", "id":0, "found":False},
+                {"position": (1527, 201), "size": (32, 52), "name":"kristall", "id":1, "found":False},
+                {"position": (933, 1123), "size": (46, 75), "name":"ballon", "id":2, "found":False},
+                {"position": (86, 23), "size": (38, 32), "name":"uhr", "id":3, "found":False},
+                {"position": (723, 510), "size": (24, 29), "name":"tulpe", "id":4, "found":False},
+                {"position": (1449, 77), "size": (59, 27), "name":"schluessel", "id":5, "found":False},
+                {"position": (649, 662), "size": (82, 43), "name":"gitarre", "id":6, "found":False}
             ]            
         ]  
     def get_prefix(self):
@@ -394,6 +409,8 @@ class GameState(EventDispatcher):
             prefix = './images/zimmer/'
         elif self.game_level == 2:
             prefix = './images/garten/'
+        elif self.game_level == 3:
+            prefix = './images/wald/'
         return prefix
     
     def set_source_image(self):
@@ -404,6 +421,8 @@ class GameState(EventDispatcher):
                 self.source_image = "./images/zimmer/zimmer.png"
             elif self.game_level == 2:
                 self.source_image = "./images/garten/garten.png"
+            elif self.game_level == 3:
+                self.source_image = "./images/wald/wald_level.png"
 
             music_track = self.level_music_tracks[self.game_level]
             self.set_level_music(music_track)
