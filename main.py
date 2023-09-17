@@ -24,8 +24,6 @@ class MainMenuScreen(Screen):
     def on_enter(self):
         app = App.get_running_app()
         app.game_state.load_hidden_objects()
-        #if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
-            #app.game_state.music.play()
           
         # Update the button properties here based on the current game state
         button = self.ids['continue_button']
@@ -54,7 +52,7 @@ class MainMenuScreen(Screen):
         app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
         #app.game_state.set_level_music(app.game_state.level_music_tracks[0])
         app.game_state.hidden_objects = app.game_state.get_new_game_data()
-        app.root.current = 'levels'  # Gehe zur Levelauswahl zurück   ChatGPT
+        app.root.current = 'levels' 
 
 class GameScreen(Screen): 
     def on_enter(self):        
@@ -240,7 +238,7 @@ class BoundedScatter(Scatter):
         return super().on_transform(*args)
 
 class HiddenObjectGame(Widget):
-    source_image = StringProperty('image.jpg')  # Use the image format you have, either .jpg or .png
+    source_image = StringProperty('image.jpg')  
     app = None
 
     def __init__(self, **kwargs):
@@ -284,7 +282,6 @@ class HiddenObjectGame(Widget):
                             item["found"] = True
                     self.update_object_found(obj["name"])
                     self.app.game_state.save_hidden_objects()
-                    #self.flash_screen()
                     break
             
             return super().on_touch_up(touch)
@@ -439,8 +436,7 @@ class GameState(EventDispatcher):
                 self.set_level_music(music_track)
         else:
             self.source_image = bg_image
-        #else:
-            #self.source_image = 'image.jpg' ChatGPT hat forgeschlagen, braucht man das???
+        
     
     def set_level_music(self, music_track):  #ChatGPT
         # Stop any currently playing music
