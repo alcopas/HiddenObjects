@@ -131,17 +131,17 @@ class OptionsScreen(Screen):
         app = App.get_running_app()
         music_button = self.ids['music_button']
         if app.game_state.music_enabled:
-            music_button.text = 'Musik: On'
+            music_button.text = 'Musik: An'
         else:
-            music_button.text = 'Musik: Off'
+            music_button.text = 'Musik: Ab'
 
     def update_soundfx_button_text(self):
         app = App.get_running_app()
         soundfx_button = self.ids['soundfx_button']
         if app.game_state.soundfx_enabled:
-            soundfx_button.text = 'Sound-Effekte: On'
+            soundfx_button.text = 'Sound-Effekte: An'
         else:
-            soundfx_button.text = 'Sound-Effekte: Off'
+            soundfx_button.text = 'Sound-Effekte: Ab'
 
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
