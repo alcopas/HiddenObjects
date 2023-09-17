@@ -105,6 +105,7 @@ class GameScreen(Screen):
 
     def bb_press(self):
         app = App.get_running_app()
+        app.game_state.set_source_image('./image.jpg')
         app.root.current = 'levels'
 
     def on_leave(self):
@@ -201,11 +202,11 @@ class LevelSelecterScreen(Screen):
 
     def on_house_click(self, instance, touch):
         # Get the touch coordinates
-        touch_x, touch_y = touch.pos
         image = self.children[1].children[0]
-        scale_factor = image.width / image.texture.width
+        scale_factor_x = image.width / image.texture.width
+        scale_factor_y = image.height / image.texture.height
 
-        local_touch = image.to_local(touch.x / scale_factor, touch.y / scale_factor)
+        local_touch = image.to_local(touch.x / scale_factor_x, touch.y / scale_factor_y)
         #convert these cooridnatates to the relative coordinates for the image
 
 
@@ -422,19 +423,22 @@ class GameState(EventDispatcher):
             prefix = './images/wald/'
         return prefix
     
-    def set_source_image(self):
-        if self.game_level >= 0 and self.game_level < len(self.level_music_tracks):
-            if self.game_level == 0:
-                self.source_image = "./images/teich/teich.png"
-            elif self.game_level == 1:
-                self.source_image = "./images/zimmer/zimmer.png"
-            elif self.game_level == 2:
-                self.source_image = "./images/garten/garten.png"
-            elif self.game_level == 3:
-                self.source_image = "./images/wald/wald_level.png"
+    def set_source_image(self, bg_image = None):
+        if bg_image is None:
+            if self.game_level >= 0 and self.game_level < len(self.level_music_tracks):
+                if self.game_level == 0:
+                    self.source_image = "./images/teich/teich.png"
+                elif self.game_level == 1:
+                    self.source_image = "./images/zimmer/zimmer.png"
+                elif self.game_level == 2:
+                    self.source_image = "./images/garten/garten.png"
+                elif self.game_level == 3:
+                    self.source_image = "./images/wald/wald_level.png"
 
-            music_track = self.level_music_tracks[self.game_level]
-            self.set_level_music(music_track)
+                music_track = self.level_music_tracks[self.game_level]
+                self.set_level_music(music_track)
+        else:
+            self.source_image = bg_image
         #else:
             #self.source_image = 'image.jpg' ChatGPT hat forgeschlagen, braucht man das???
     
