@@ -3,9 +3,7 @@ from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.properties import (
-    ListProperty, StringProperty
-)
+from kivy.properties import (ListProperty, StringProperty)
 from kivy.event import EventDispatcher
 from kivy.uix.scatter import Scatter
 from kivy.uix.boxlayout import BoxLayout
@@ -206,11 +204,17 @@ class LevelSelecterScreen(Screen):
     def on_house_click(self, instance, touch):
         # Get the touch coordinates
         touch_x, touch_y = touch.pos
+        image = self.children[1].children[0]
+        scale_factor = image.width / image.texture.width
+
+        local_touch = image.to_local(touch.x / scale_factor, touch.y / scale_factor)
+        #convert these cooridnatates to the relative coordinates for the image
+
 
         # Check if the touch coordinates are within any clickable area
         for area in self.click_areas:
             x, y, width, height = area["position"] + area["size"]
-            if x <= touch_x <= x + width and y <= touch_y <= y + height:
+            if x <= local_touch[0] <= x + width and y <= local_touch[1] <= y + height:
                 area["action"](area["level"])
                 break
         
