@@ -53,9 +53,7 @@ class MainMenuScreen(Screen):
         app = App.get_running_app()
         app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
         #app.game_state.set_level_music(app.game_state.level_music_tracks[0])
-        for level in app.game_state.hidden_objects:
-            for item in level:
-                item["found"] = False
+        app.game_state.hidden_objects = app.game_state.get_new_game_data()
         app.root.current = 'levels'  # Gehe zur Levelauswahl zurück   ChatGPT
 
 class GameScreen(Screen): 
@@ -353,7 +351,11 @@ class GameState(EventDispatcher):
         self.music = SoundLoader.load('intro_music.piano.mp3')
         self.game_level = 0
         self.widget_refs = {}
-        self.hidden_objects = [
+        self.hidden_objects = self.get_new_game_data()
+        
+    
+    def get_new_game_data(self):
+        hidden_objects = [
             [
                 {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
                 {"position": (60, 184), "size": (19, 16), "name":"muenze", "id":1, "found":False},
@@ -405,6 +407,9 @@ class GameState(EventDispatcher):
                 {"position": (649, 662), "size": (82, 43), "name":"gitarre", "id":6, "found":False}
             ]            
         ]  
+        return hidden_objects
+
+    
     def get_prefix(self):
         prefix = ''
         if self.game_level == 0:
