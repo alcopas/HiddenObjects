@@ -403,7 +403,17 @@ class GameState(EventDispatcher):
                 {"position": (723, 510), "size": (24, 29), "name":"tulpe", "id":4, "found":False},
                 {"position": (1449, 77), "size": (59, 27), "name":"schluessel", "id":5, "found":False},
                 {"position": (649, 662), "size": (82, 43), "name":"gitarre", "id":6, "found":False}
-            ]            
+            ]      
+            [
+                {"position": (224, 501) "size": (472, 52), "name":"ente", "id":0, "found":False},
+                {"position": (9, 236), "size": (75, 78), "name":"hemd", "id":1, "found":False},
+                {"position": (1450, 110), "size": (67, 33), "name":"cd", "id":2, "found":False},
+                {"position": (1300, 547), "size": (51, 33), "name":"bonbon", "id":3, "found":False},
+                {"position": (1098, 509), "size": (19, 20), "name":"herz", "id":4, "found":False},
+                {"position": (1019, 635), "size": (39, 40), "name":"timtschnecke", "id":5, "found":False},
+                {"position": (1073, 721), "size": (79, 96), "name":"zweig", "id":6, "found":False},
+                {"position": (315, 967), "size": (82, 57), "name":"turtle", "id":6, "found":False}
+            ]        
         ]  
         return hidden_objects
 
