@@ -190,7 +190,13 @@ class LevelSelecterScreen(Screen):
                 "level": 3,
                 "action": self.select_level,
             },
-            
+             {
+                "position": (556, 123),
+                "size": (220, 477),
+                "level": 4,
+                "action": self.select_level,
+            },
+                 
         ]
 
     def select_level(self, level):
@@ -403,9 +409,9 @@ class GameState(EventDispatcher):
                 {"position": (723, 510), "size": (24, 29), "name":"tulpe", "id":4, "found":False},
                 {"position": (1449, 77), "size": (59, 27), "name":"schluessel", "id":5, "found":False},
                 {"position": (649, 662), "size": (82, 43), "name":"gitarre", "id":6, "found":False}
-            ]      
+            ],      
             [
-                {"position": (224, 501) "size": (472, 52), "name":"ente", "id":0, "found":False},
+                {"position": (224, 501), "size": (472, 52), "name":"ente", "id":0, "found":False},
                 {"position": (9, 236), "size": (75, 78), "name":"hemd", "id":1, "found":False},
                 {"position": (1450, 110), "size": (67, 33), "name":"cd", "id":2, "found":False},
                 {"position": (1300, 547), "size": (51, 33), "name":"bonbon", "id":3, "found":False},
@@ -428,6 +434,8 @@ class GameState(EventDispatcher):
             prefix = './images/garten/'
         elif self.game_level == 3:
             prefix = './images/wald/'
+        elif self.game_level == 4:
+            prefix = './images/badezimmer/'
         return prefix
     
     def set_source_image(self, bg_image = None):
@@ -441,6 +449,8 @@ class GameState(EventDispatcher):
                     self.source_image = "./images/garten/garten.png"
                 elif self.game_level == 3:
                     self.source_image = "./images/wald/wald_level.png"
+                elif self.game_level == 4:
+                    self.source_image = "./images/badezimmer/badezimmer.png"
 
                 music_track = self.level_music_tracks[self.game_level]
                 self.set_level_music(music_track)
