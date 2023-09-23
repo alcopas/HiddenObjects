@@ -190,7 +190,7 @@ class LevelSelecterScreen(Screen):
                 "level": 3,
                 "action": self.select_level,
             },
-             {
+            {
                 "position": (556, 123),
                 "size": (220, 477),
                 "level": 4,
@@ -255,6 +255,7 @@ class HiddenObjectGame(Widget):
         
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
         self.sound_effect_1 = SoundLoader.load('correct_sound.mp3') 
+        self.sound_effect_2 = SoundLoader.load('success.mp3') 
 
         # Ensure scatter size is set to the image's size
         self.scatter.size = self.image.size
@@ -295,7 +296,8 @@ class HiddenObjectGame(Widget):
     def check_all_found(self):
         all_found = all(obj["found"] for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level])
         game_area = self.parent.parent.ids['game_area']
-        if all_found:            
+        if all_found:   
+            self.sound_effect_2   #doesnt work    
             congratulation_label = Label(
                 text="Glückwunsch! Du hast alle Gegenstände Gefunden!",
                 font_size='20sp',
@@ -416,7 +418,7 @@ class GameState(EventDispatcher):
                 {"position": (1450, 110), "size": (67, 33), "name":"cd", "id":2, "found":False},
                 {"position": (1300, 547), "size": (51, 33), "name":"bonbon", "id":3, "found":False},
                 {"position": (1098, 509), "size": (19, 20), "name":"herz", "id":4, "found":False},
-                {"position": (1019, 635), "size": (39, 40), "name":"timtschnecke", "id":5, "found":False},
+                {"position": (1019, 635), "size": (39, 40), "name":"zimtschnecke", "id":5, "found":False},
                 {"position": (1073, 721), "size": (79, 96), "name":"zweig", "id":6, "found":False},
                 {"position": (315, 967), "size": (82, 57), "name":"turtle", "id":6, "found":False}
             ]        
