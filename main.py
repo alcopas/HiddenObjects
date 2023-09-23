@@ -118,7 +118,6 @@ class OptionsScreen(Screen):
         self.update_music_button_text()
         app.game_state.save_hidden_objects()
 
-
     def toggle_soundfx(self):
         app = App.get_running_app()
         app.game_state.soundfx_enabled = not app.game_state.soundfx_enabled
@@ -140,6 +139,11 @@ class OptionsScreen(Screen):
             soundfx_button.text = 'Sound-Effekte: An'
         else:
             soundfx_button.text = 'Sound-Effekte: Ab'
+
+class InfosScreen(Screen):
+    def back_button_press(self):
+        app = App.get_running_app()
+        app.root.current = 'menu'
 
 class IntroScreen(Screen):
     def __init__(self, **kwargs):
@@ -527,6 +531,8 @@ class HiddenObjectApp(App):
         sm.add_widget(GameScreen(name='game'))
         sm.add_widget(OptionsScreen(name='options'))
         sm.add_widget(OutroScreen(name='outro'))
+        sm.add_widget(InfosScreen(name='infos'))
+        
 
         sm.current = 'intro'
 
