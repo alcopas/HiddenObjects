@@ -353,7 +353,9 @@ class GameState(EventDispatcher):
         'zimmer.mp3',  # Musik für Level 1
         'garten.mp3',  # Musik für Level 2
         'wald.mp3', # Musik für Level 3
+        'wald.mp3', # Musik für Level 3
     ]
+
 
     def __init__(self, **kwargs):
         
