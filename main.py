@@ -353,7 +353,7 @@ class GameState(EventDispatcher):
         'zimmer.mp3',  # Musik für Level 1
         'garten.mp3',  # Musik für Level 2
         'wald.mp3', # Musik für Level 3
-        'wald.mp3', # Musik für Level 3
+        'badezimmer.mp3', # Musik für Level 4
     ]
 
 
