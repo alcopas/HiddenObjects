@@ -359,7 +359,6 @@ class GameState(EventDispatcher):
 
     def __init__(self, **kwargs):
         
-        self.sound_effect_2 = SoundLoader.load('click_sound.mp3')
         self.music = SoundLoader.load('intro_music.piano.mp3')
         self.game_level = 0
         self.widget_refs = {}
@@ -369,8 +368,8 @@ class GameState(EventDispatcher):
     def get_new_game_data(self):
         hidden_objects = [
             [
-                {"position": (485, 98), "size": (38, 10), "name":"brief_teich", "id":0, "found":False},
-                {"position": (60, 184), "size": (19, 16), "name":"muenze", "id":1, "found":False},
+                {"position": (475, 91), "size": (59, 26), "name":"brief_teich", "id":0, "found":False},
+                {"position": (63, 173), "size": (24, 33), "name":"muenze", "id":1, "found":False},
                 {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":False},
                 {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":False},
                 {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":False},
