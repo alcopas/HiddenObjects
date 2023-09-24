@@ -75,12 +75,11 @@
 <InfosScreen>:
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            text: 'Suche die rechts angezeigten Gegenstände; scrolle runter, um alle zu sehen.\n\nDu kannst die Bilder der Levels nach Bedarf vergrössen/ verkleinern und bewegen.\nNachdem du alle Levels komplett gelöst hast, wird eine kurze Schlussmontage abgespielt. ;)'
-            font_size: '20sp'
-            size_hint: None, None
-            size: 400, 300
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Image:
+            source: 'infos.png' 
+            allow_stretch: True
+            keep_ratio: False 
+        
 
     AnchorLayout:  #ChatGPT, damit der Knopf rechts im Ecken ist
         anchor_x: 'right'
