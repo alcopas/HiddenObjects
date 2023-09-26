@@ -415,7 +415,8 @@ class GameState(EventDispatcher):
                 {"position": (86, 23), "size": (38, 32), "name":"uhr", "id":3, "found":False},
                 {"position": (723, 510), "size": (24, 29), "name":"tulpe", "id":4, "found":False},
                 {"position": (1449, 77), "size": (59, 27), "name":"schluessel", "id":5, "found":False},
-                {"position": (649, 662), "size": (82, 43), "name":"gitarre", "id":6, "found":False}
+                {"position": (649, 662), "size": (82, 43), "name":"gitarre", "id":6, "found":False},
+                {"position": (1058, 643), "size": (19, 26), "name":"topf_wald", "id":7, "found":False}
             ],      
             [
                 {"position": (224, 501), "size": (472, 52), "name":"ente", "id":0, "found":False},
