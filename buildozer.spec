@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Lolas kleine Abenteuer
+title = "Lolas kleine Abenteuer"
 
 # (str) Package name
 package.name = hiddenobjects
@@ -44,11 +44,12 @@ requirements = python3,kivy
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-presplash.filename = ./icon.png
+presplash.filename = %(source.dir)s/icon.png
+#presplash.filename = icon.png
 
 # (str) Icon of the application
-icon.filename = ./icon.png
-
+#icon.filename = %(source.dir)s/icon.png
+icon.filename = %(source.dir)s/appicon.png
 # (list) Supported orientations
 # Valid options are: landscape, portrait, portrait-reverse or landscape-reverse
 orientation = landscape
