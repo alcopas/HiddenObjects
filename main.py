@@ -16,6 +16,7 @@ from kivy.uix.label import Label
 from kivy.uix.screenmanager import NoTransition
 from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.scrollview import ScrollView
+from datetime import datetime
 
 
 DEBUG = False
@@ -52,6 +53,7 @@ class MainMenuScreen(Screen):
         app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
         #app.game_state.set_level_music(app.game_state.level_music_tracks[0])
         app.game_state.hidden_objects = app.game_state.get_new_game_data()
+        app.game_state.save_hidden_objects()
         app.root.current = 'levels' 
 
 class GameScreen(Screen): 
@@ -269,7 +271,6 @@ class HiddenObjectGame(Widget):
 
     def update_image_source(self, instance, value):
         self.image.source = value
-        self.check_all_found()
 
     def is_item_found(self, item_name):
         for obj in self.app.game_state.hidden_objects[self.app.game_state.game_level]:
@@ -294,6 +295,7 @@ class HiddenObjectGame(Widget):
                             item["found"] = True
                     self.update_object_found(obj["name"])
                     self.app.game_state.save_hidden_objects()
+                    self.check_all_found()
                     break
             
             return super().on_touch_up(touch)
@@ -306,7 +308,7 @@ class HiddenObjectGame(Widget):
             self.sound_effect_2   #doesnt work
             if not "congrats_label" in self.app.game_state.widget_refs:
                 congratulation_label = Label(
-                    text="Glückwunsch! Du TEST hast alle Gegenstände Gefunden!",
+                    text="Glückwunsch! Du hast alle Gegenstände Gefunden!",
                     font_size='20sp',
                     size_hint=(None, None),  # Use None for fixed size
                     size=(400, 30),  # Set the size of the label
@@ -316,27 +318,27 @@ class HiddenObjectGame(Widget):
                 game_area.parent.parent.add_widget(congratulation_label) # add to the game_screen
             else:
                 congratulation_label = self.app.game_state.widget_refs.get("congrats_label")
-                congratulation_label.text = "FOO"
+                if not congratulation_label.parent:
+                    game_area.parent.parent.add_widget(congratulation_label)            
             
-            
-            # Transition to the outro screen without animation
-            self.app.all_levels_complete = self.check_all_levels_complete()  # Check if all levels are complete
-            if self.app.all_levels_complete:
-                app = App.get_running_app()
-                app.root.transition = SlideTransition(direction='left')
-                app.root.current = 'outro'
+            self.check_all_levels_complete()  # Check if all levels are complete
+
         else:
-            cl = self.app.game_state.widget_refs.get("congrats_label")
-            if cl:
-                cl.text = "BAR"
-                game_area.parent.parent.remove_widget(cl)
+            # check if the congratulation_label is in the widget_refs, if so remove it. Also check if the game_area.parent.parent has the congratulation_label as a child, if so remove it
+            if "congrats_label" in self.app.game_state.widget_refs:
+                congratulation_label = self.app.game_state.widget_refs.get("congrats_label")
+                if congratulation_label.parent:
+                    game_area.parent.parent.remove_widget(congratulation_label)
+                self.app.game_state.widget_refs.pop("congrats_label")       
+
     
     def check_all_levels_complete(self):
-    # Check if all levels are complete (all objects are found in all levels) ChatGPT
         for level in self.app.game_state.hidden_objects:
             if not all(obj["found"] for obj in level):
-                return False
-        return True
+                return
+        app = App.get_running_app()
+        app.root.transition = SlideTransition(direction='left')
+        app.root.current = 'outro'
 
     def update_object_found(self, object_name):
         prefix = self.app.game_state.get_prefix()
@@ -346,7 +348,6 @@ class HiddenObjectGame(Widget):
             img_widget.source = greyscale_img_path
         if self.sound_effect_1:
             if self.app.game_state.soundfx_enabled: self.sound_effect_1.play()
-        self.check_all_found()
            
 class GameState(EventDispatcher):
     music = None
@@ -378,7 +379,7 @@ class GameState(EventDispatcher):
         hidden_objects = [
             [
                 {"position": (475, 91), "size": (59, 26), "name":"brief_teich", "id":0, "found":False},
-                {"position": (63, 173), "size": (24, 33), "name":"muenze", "id":1, "found":False},
+                {"position": (63, 173), "size": (24, 33), "name":"muenze", "id":1, "found":True},
                 {"position": (875, 361), "size": (29, 42), "name":"frosch_teich", "id":2, "found":True},
                 {"position": (904, 347), "size": (34, 46), "name":"frosch_teich", "id":2, "found":True},
                 {"position": (945, 592), "size": (25, 29), "name":"muschel", "id":3, "found":True},
@@ -392,7 +393,7 @@ class GameState(EventDispatcher):
                 {"position": (1046, 480), "size": (37, 56), "name":"hamster_w", "id":9, "found":True}            
             ],
             [
-                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":True},
+                {"position": (448, 783), "size": (26, 42), "name":"frosch", "id":0, "found":False},
                 {"position": (567, 644), "size": (23, 7), "name":"brief", "id":1, "found":True},
                 {"position": (7, 586), "size": (80, 37), "name":"rose", "id":2, "found":True},
                 {"position": (423, 1139), "size": (29, 17), "name":"pinguin", "id":3, "found":True},
@@ -403,7 +404,7 @@ class GameState(EventDispatcher):
                 {"position": (533, 543), "size": (17, 18), "name":"socke", "id":7, "found":True},
                 {"position": (1131, 0), "size": (64, 54), "name":"kerze", "id":8, "found":True},
                 {"position": (1576, 933), "size": (24, 29), "name":"regenbogenball", "id":9, "found":True},
-                {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":False}
+                {"position": (1046, 1010), "size": (24, 22), "name":"katze", "id":10, "found":True}
             ],
             [
                 {"position": (59, 602), "size": (84, 67), "name":"kuchen", "id":0, "found":True},
@@ -415,7 +416,7 @@ class GameState(EventDispatcher):
                 {"position": (365, 1071), "size": (45, 47), "name":"hibiscus", "id":6, "found":True},
                 {"position": (826, 153), "size": (52, 31), "name":"kamm", "id":7, "found":True},
                 {"position": (508, 968), "size": (65, 57), "name":"waschbaer", "id":8, "found":True},
-                {"position": (617, 938), "size": (45, 42), "name":"brot", "id":9, "found":False}
+                {"position": (617, 938), "size": (45, 42), "name":"brot", "id":9, "found":True}
             ],
             [
                 {"position": (74, 233), "size": (86, 73), "name":"mueze", "id":0, "found":True},
@@ -435,7 +436,7 @@ class GameState(EventDispatcher):
                 {"position": (1098, 509), "size": (19, 20), "name":"herz", "id":4, "found":True},
                 {"position": (1019, 635), "size": (39, 40), "name":"zimtschnecke", "id":5, "found":True},
                 {"position": (1073, 721), "size": (79, 96), "name":"zweig", "id":6, "found":True},
-                {"position": (315, 967), "size": (82, 57), "name":"turtle", "id":7, "found":False}
+                {"position": (315, 967), "size": (82, 57), "name":"turtle", "id":7, "found":True}
             ]        
         ]  
         return hidden_objects
