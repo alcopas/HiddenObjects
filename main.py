@@ -3,7 +3,7 @@ from kivy.uix.scatter import Scatter
 from kivy.uix.image import Image
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.properties import (ListProperty, StringProperty)
+from kivy.properties import (StringProperty)
 from kivy.event import EventDispatcher
 from kivy.uix.scatter import Scatter
 from kivy.uix.boxlayout import BoxLayout
@@ -48,6 +48,7 @@ class MainMenuScreen(Screen):
         app = App.get_running_app()
         if app.game_state.music:
             app.game_state.music.stop()
+
     def start_new_game(self):
         app = App.get_running_app()
         app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
@@ -59,13 +60,21 @@ class MainMenuScreen(Screen):
 class GameScreen(Screen): 
     def on_enter(self):        
         hog = self.ids['game_area']
+        app = App.get_running_app()
+
+        if "congrats_label" in app.game_state.widget_refs:
+                congratulation_label = app.game_state.widget_refs.get("congrats_label")
+                if congratulation_label.parent:
+                    hog.parent.parent.remove_widget(congratulation_label)
+                app.game_state.widget_refs.pop("congrats_label")
+
         # set the scale_min of the scatter to make sure the image is scaled to the game_area
         our_scale_min=max(self.width / 1600, self.height / 1200)
         hog.scatter.scale_min = our_scale_min
         hog.scatter.scale = our_scale_min
 
         status_area = self.ids['status_area']
-        app = App.get_running_app()
+        
         if app.game_state.music and app.game_state.music_enabled and not app.game_state.music.state == 'play':
             app.game_state.music.play()
         if app.game_state.music and not app.game_state.music_enabled:
@@ -110,7 +119,7 @@ class GameScreen(Screen):
 
     def on_leave(self):
         app = App.get_running_app()
-        if app.game_state.music:
+        if app.game_state.music and not app.root.current == 'outro':
             app.game_state.music.stop()
 
 class OptionsScreen(Screen):
@@ -521,6 +530,8 @@ class OutroScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     def on_enter(self):
+        oc = self.ids['outro_carousel']
+        oc.index = 0
         app = App.get_running_app()
         if app.game_state.music:
             app.game_state.music.stop() 
