@@ -6,13 +6,11 @@
             text: 'Optionen'
             font_size: '24sp'
 
-        # Music toggle button
         ToggleButton:
             id: music_button
             text: 'Musik: An' if app.game_state.music_enabled else 'Musik: Ab'
             on_release: root.toggle_music()
 
-        # Sound effects toggle button
         ToggleButton:
             id: soundfx_button
             text: 'Sound-Effekte: An' if app.game_state.soundfx_enabled else 'Sound-Effekte: Ab'
@@ -151,7 +149,6 @@
             source: 'haus_zurueck.png'
             allow_stretch: True
             keep_ratio: True
-            #Damit das Bild dem Smartphone angepasst wird(ChatGPT)
         Image:
             source: 'haus_fertig.png'
             allow_stretch: True
