@@ -179,7 +179,6 @@ class LevelSelecterScreen(Screen):
         self.create_click_areas()
       
     def create_click_areas(self):
-        # Define clickable areas and their associated actions
         self.click_areas = [
             {
                 "position": (1041, 0),
@@ -314,12 +313,11 @@ class HiddenObjectGame(Widget):
         game_area = self.parent.parent.ids['game_area']
         congratulation_label = None
         if all_found:   
-            self.sound_effect_2   #doesnt work
             if not "congrats_label" in self.app.game_state.widget_refs:
                 congratulation_label = Label(
                     text="Glückwunsch! Du hast alle Gegenstände Gefunden!",
                     font_size='20sp',
-                    size_hint=(None, None),  # Use None for fixed size
+                    size_hint=(None, None),  
                     size=(400, 30),  # Set the size of the label
                     pos_hint={'center_x': 0.5, 'center_y': 0.5},  # Position in the center of the screen
                 )
