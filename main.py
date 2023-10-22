@@ -26,7 +26,7 @@ class MainMenuScreen(Screen):
         app = App.get_running_app()
         app.game_state.load_hidden_objects()
           
-        # Update the button properties here based on the current game state
+        
         button = self.ids['continue_button']
         if self.is_all_found():
             button.text = 'Game Over'
@@ -51,8 +51,7 @@ class MainMenuScreen(Screen):
 
     def start_new_game(self):
         app = App.get_running_app()
-        app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert
-        #app.game_state.set_level_music(app.game_state.level_music_tracks[0])
+        app.game_state.game_level = 0  # Setze das Level auf 0 oder einen anderen Anfangswert, ChatGPT
         app.game_state.hidden_objects = app.game_state.get_new_game_data()
         app.game_state.save_hidden_objects()
         app.root.current = 'levels' 
@@ -68,7 +67,7 @@ class GameScreen(Screen):
                     hog.parent.parent.remove_widget(congratulation_label)
                 app.game_state.widget_refs.pop("congrats_label")
 
-        # set the scale_min of the scatter to make sure the image is scaled to the game_area
+        # set the scale_min of the scatter to make sure the image is scaled to the game_area, ChatGPT
         our_scale_min=max(self.width / 1600, self.height / 1200)
         hog.scatter.scale_min = our_scale_min
         hog.scatter.scale = our_scale_min
@@ -85,15 +84,15 @@ class GameScreen(Screen):
 
         status_area.clear_widgets()
 
-        # Adding the back button directly to the status_area
+       
         bb = Button(text="Zurück", size_hint_y=None, height=100)
         bb.on_press = self.bb_press
         status_area.add_widget(bb)
 
-        # Create ScrollView and VBox for scrollable content
-        scroll_view = ScrollView(do_scroll_x=False, size_hint_y=0.85) # Make it occupy the rest of the status_area height
+        # Create ScrollView and VBox for scrollable content, ChatGPT
+        scroll_view = ScrollView(do_scroll_x=False, size_hint_y=0.85) 
         vbox = BoxLayout(orientation='vertical', size_hint_y=None)
-        vbox.bind(minimum_height=vbox.setter('height'))  # Adjust height dynamically
+        vbox.bind(minimum_height=vbox.setter('height'))  
 
         last_added = -1
         for item in app.game_state.hidden_objects[app.game_state.game_level]:
@@ -106,7 +105,7 @@ class GameScreen(Screen):
                 bl.add_widget(img)                
                 vbox.add_widget(bl)   
 
-        # Add vbox to scroll_view and add scroll_view to status_area
+        # Add vbox to scroll_view and add scroll_view to status_area, ChatGPT
         scroll_view.add_widget(vbox)
         status_area.add_widget(scroll_view)
 
@@ -163,9 +162,9 @@ class IntroScreen(Screen):
         app = App.get_running_app()
         app.game_state.load_hidden_objects()
         if app.game_state.music:
-            app.game_state.music.stop()  # Stop any currently playing music
-            app.game_state.music.unload()  # Unload the current music file
-        app.game_state.music = SoundLoader.load('intro_music.piano.mp3')  # Load the intro music
+            app.game_state.music.stop() 
+            app.game_state.music.unload() 
+        app.game_state.music = SoundLoader.load('intro_music.piano.mp3') 
         if app.game_state.music and app.game_state.music_enabled:
             app.game_state.music.play()
 
@@ -225,10 +224,10 @@ class LevelSelecterScreen(Screen):
         scale_factor_y = image.height / image.texture.height
 
         local_touch = image.to_local(touch.x / scale_factor_x, touch.y / scale_factor_y)
-        #convert these cooridnatates to the relative coordinates for the image
+        #convert these cooridnatates to the relative coordinates for the image, ChatGPT
 
 
-        # Check if the touch coordinates are within any clickable area
+        # Check if the touch coordinates are within any clickable area, ChatGPT
         for area in self.click_areas:
             x, y, width, height = area["position"] + area["size"]
             if x <= local_touch[0] <= x + width and y <= local_touch[1] <= y + height:
@@ -238,7 +237,7 @@ class LevelSelecterScreen(Screen):
 class CustomCarousel(Carousel):
 
     def on_touch_move(self, touch):
-        # Check if the current index is the last slide and if the touch is moving to the left
+        # Check if the current index is the last slide and if the touch is moving to the left, ChatGPT
         if self.index == len(self.slides) - 1 and touch.dx < 0:
             self.parent.manager.current = 'menu'
             return True
@@ -268,10 +267,9 @@ class HiddenObjectGame(Widget):
         self.scatter = BoundedScatter(do_rotation=False, do_translation=True, size_hint=(None, None))
         
         self.image = Image(source=self.source_image, size_hint=(None, None), size=(1600, 1200))
-        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3') 
-        self.sound_effect_2 = SoundLoader.load('success.mp3') 
+        self.sound_effect_1 = SoundLoader.load('correct_sound.mp3')  
 
-        # Ensure scatter size is set to the image's size
+        # Ensure scatter size is set to the image's size, ChatGPT
         self.scatter.size = self.image.size
 
         self.scatter.add_widget(self.image)
@@ -288,9 +286,9 @@ class HiddenObjectGame(Widget):
     
     def on_touch_up(self, touch):
         if self.scatter.collide_point(*touch.pos):
-            # Convert touch location to Scatter's local coordinates
+            # Convert touch location to Scatter's local coordinates, ChatGPT
             local_touch = self.scatter.to_local(*touch.pos, relative=False)
-            # Convert local_touch from Scatter's coordinates to the image's current scale and position
+            # Convert local_touch from Scatter's coordinates to the image's current scale and position, ChatGPT
             img_x = local_touch[0] - self.image.x
             img_y = local_touch[1] - self.image.y
             
@@ -318,11 +316,11 @@ class HiddenObjectGame(Widget):
                     text="Glückwunsch! Du hast alle Gegenstände Gefunden!",
                     font_size='20sp',
                     size_hint=(None, None),  
-                    size=(400, 30),  # Set the size of the label
-                    pos_hint={'center_x': 0.5, 'center_y': 0.5},  # Position in the center of the screen
+                    size=(400, 30), 
+                    pos_hint={'center_x': 0.5, 'center_y': 0.5},  
                 )
                 self.app.game_state.widget_refs["congrats_label"] = congratulation_label
-                game_area.parent.parent.add_widget(congratulation_label) # add to the game_screen
+                game_area.parent.parent.add_widget(congratulation_label) 
             else:
                 congratulation_label = self.app.game_state.widget_refs.get("congrats_label")
                 if not congratulation_label.parent:
@@ -331,7 +329,7 @@ class HiddenObjectGame(Widget):
             self.check_all_levels_complete()  # Check if all levels are complete
 
         else:
-            # check if the congratulation_label is in the widget_refs, if so remove it. Also check if the game_area.parent.parent has the congratulation_label as a child, if so remove it
+            # check if the congratulation_label is in the widget_refs, if so remove it. Also check if the game_area.parent.parent has the congratulation_label as a child, if so remove it ChatGPT
             if "congrats_label" in self.app.game_state.widget_refs:
                 congratulation_label = self.app.game_state.widget_refs.get("congrats_label")
                 if congratulation_label.parent:
@@ -509,7 +507,7 @@ class GameState(EventDispatcher):
         try:
             with open('hidden_objects.pkl', 'rb') as file:
                 loaded_data = pickle.load(file)
-                if isinstance(loaded_data, dict):  # Checking if loaded data is a dictionary
+                if isinstance(loaded_data, dict):  # Checking if loaded data is a dictionary, ChatGPT
                     self.hidden_objects = loaded_data.get("hidden_objects", [])
                     self.soundfx_enabled = loaded_data.get("soundfx_enabled", True)
                     self.music_enabled = loaded_data.get("music_enabled", True)
